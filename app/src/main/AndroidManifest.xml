@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      ============================================================================
+      OFFLINE BY CONSTRUCTION
+      ============================================================================
+      This app declares NO permissions at all. In particular there is no
+      <uses-permission android:name="android.permission.INTERNET" />, so the
+      process cannot open a socket even if a dependency tried to.
+
+      Consequences that are intentional, not limitations:
+        * Letter pronunciation uses the platform's offline TextToSpeech engine.
+          If a language pack is not already on the device, Android reports
+          LANG_NOT_SUPPORTED and the app falls back to a bundled sound effect.
+        * No fonts, sounds or lessons are downloaded. The Noto fonts for Bangla
+          and Arabic are bundled in res/font (SIL OFL, see
+          assets/licenses/), the sound effects live in res/raw, and the lesson
+          catalogs are compiled into the APK as Kotlin constants.
+      ============================================================================
+    -->
+
+    <!--
+      Declared so the app does not filter itself out of tablets/large phones in
+      the store, even though the UI is designed portrait-first.
+    -->
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.touchscreen.multitouch"
+        android:required="false" />
+
+    <!--
+      TTS is an enhancement, not a requirement: the app is fully usable (silent,
+      with sound-effect feedback) on a device with no TTS engine installed.
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
+    <application
+        android:name=".KidsLearnApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.KidsLearn"
+        tools:targetApi="34">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode|fontScale|smallestScreenSize|density"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.KidsLearn"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

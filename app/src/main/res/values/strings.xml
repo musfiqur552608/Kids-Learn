@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+      App shell
+    -->
+    <!--
+      The brand name is a proper noun and is intentionally identical in every
+      language. `translatable="false"` tells lint so, and stops a translator from
+      "localising" it into something that is no longer the product's name.
+    -->
+    <string name="app_name" translatable="false">Kids Learn</string>
+
+    <!--
+      Home
+    -->
+    <string name="home_greeting">Hello!</string>
+    <string name="home_greeting_named">Hello, %1$s!</string>
+    <string name="home_subtitle">What shall we learn today?</string>
+    <string name="home_continue">Keep learning</string>
+    <string name="home_continue_with">Keep learning: %1$s</string>
+    <string name="home_modules">Subjects</string>
+
+    <!--
+      Modules. Referenced from `ModuleType` via `ui/alphabet/Labels.kt`, so the
+      enum and these strings must stay in step.
+    -->
+    <string name="module_english">English</string>
+    <string name="module_bangla">Bangla</string>
+    <string name="module_arabic">Arabic</string>
+    <string name="module_maths">Maths</string>
+    <string name="module_games">Games</string>
+    <string name="module_progress">Progress</string>
+    <string name="module_parent_zone">Grown-ups</string>
+
+    <!--
+      Alphabet screens
+    -->
+    <string name="alphabet_vowels">Vowels</string>
+    <string name="alphabet_consonants">Consons</string>
+    <string name="listen">Listen</string>
+    <string name="trace_instruction">Trace the letter with your finger</string>
+    <string name="take_quiz">Play the quiz</string>
+    <string name="all_letters">All letters</string>
+    <plurals name="letters_count">
+        <item quantity="one">%1$d of %2$d learned</item>
+        <item quantity="other">%1$d of %2$d learned</item>
+    </plurals>
+    <string name="letter_card_description">%1$s, %1$s for %2$s</string>
+
+    <!--
+      Quiz
+    -->
+    <plurals name="quiz_question_of">
+        <item quantity="one">Question %1$d of %2$d</item>
+        <item quantity="other">Question %1$d of %2$d</item>
+    </plurals>
+    <string name="quiz_tap_the_letter">Tap the letter</string>
+    <string name="quiz_tap_the_picture">Tap the picture</string>
+    <string name="quiz_how_many">How many?</string>
+    <string name="quiz_answer_correct">Correct!</string>
+    <string name="quiz_answer_try_again">Let us try that one again</string>
+    <string name="quiz_finish">Finish</string>
+    <plurals name="quiz_correct_count">
+        <item quantity="one">%1$d out of %2$d</item>
+        <item quantity="other">%1$d out of %2$d</item>
+    </plurals>
+
+    <!--
+      Result
+    -->
+    <string name="result_title">Well done!</string>
+    <string name="result_title_perfect">Perfect!</string>
+    <plurals name="result_stars_earned">
+        <item quantity="one">You earned %1$d star</item>
+        <item quantity="other">You earned %1$d stars</item>
+    </plurals>
+    <string name="result_new_badge">New best!</string>
+    <string name="result_play_again">Play again</string>
+    <string name="result_go_home">Home</string>
+
+    <!--
+      Maths
+    -->
+    <string name="maths_counting">Counting 1 to 20</string>
+    <string name="maths_shapes">Shapes and colours</string>
+    <string name="maths_add_subtract">Plus and minus</string>
+    <string name="maths_add_subtract_subtitle">Simple sums</string>
+    <string name="maths_tap_the_answer">Tap the answer</string>
+
+    <!--
+      Games
+    -->
+    <string name="games_title">Games</string>
+    <string name="games_subtitle">Play and learn</string>
+    <string name="game_memory_match">Memory match</string>
+    <string name="game_memory_match_subtitle">Find the matching pairs</string>
+    <string name="game_find_correct">Find it</string>
+    <string name="game_find_correct_subtitle">Tap the right one</string>
+    <string name="game_timed_quiz">Quick quiz</string>
+    <string name="game_timed_quiz_subtitle">Beat the clock</string>
+    <plurals name="game_taps_to_match">
+        <item quantity="one">%1$d tap to match them all</item>
+        <item quantity="other">%1$d taps to match them all</item>
+    </plurals>
+    <plurals name="game_rounds">
+        <item quantity="one">Round %1$d of %2$d</item>
+        <item quantity="other">Round %1$d of %2$d</item>
+    </plurals>
+    <string name="game_seconds_short">s</string>
+    <plurals name="game_score">
+        <item quantity="one">Score: %1$d</item>
+        <item quantity="other">Score: %1$d</item>
+    </plurals>
+    <plurals name="game_best">
+        <item quantity="one">Best: %1$d</item>
+        <item quantity="other">Best: %1$d</item>
+    </plurals>
+    <string name="game_you_matched">You matched them all!</string>
+
+    <!--
+      Progress
+    -->
+    <string name="progress_title">Progress</string>
+    <string name="progress_overall">Overall</string>
+    <string name="progress_total_stars">Stars</string>
+    <string name="progress_total_coins">Coins</string>
+    <string name="progress_streak">Day streak</string>
+    <string name="progress_best_streak">Best streak</string>
+    <string name="progress_lessons">Lessons</string>
+    <string name="progress_games">Games</string>
+    <string name="progress_badges">Badges</string>
+    <string name="progress_recent">Recent games</string>
+    <plurals name="progress_percent">
+        <item quantity="one">%1$d%%</item>
+        <item quantity="other">%1$d%%</item>
+    </plurals>
+    <plurals name="progress_badges_earned">
+        <item quantity="one">%1$d of %2$d earned</item>
+        <item quantity="other">%1$d of %2$d earned</item>
+    </plurals>
+
+    <!--
+      Badges
+    -->
+    <string name="badge_first_step">First step</string>
+    <string name="badge_first_perfect">First perfect</string>
+    <string name="badge_english_star">English star</string>
+    <string name="badge_bangla_star">Bangla star</string>
+    <string name="badge_arabic_star">Arabic star</string>
+    <string name="badge_maths_star">Maths star</string>
+    <string name="badge_collector_10">Star collector</string>
+    <string name="badge_collector_25">Star champion</string>
+    <string name="badge_game_champion">Game champion</string>
+    <string name="badge_streak_3">Three day streak</string>
+    <string name="badge_streak_7">Seven day streak</string>
+
+    <!--
+      Parent zone
+    -->
+    <string name="parent_zone_title">Grown-ups</string>
+    <string name="parent_gate_title">Grown-ups only</string>
+    <plurals name="parent_gate_question">
+        <item quantity="one">What is %1$s?</item>
+        <item quantity="other">What is %1$s?</item>
+    </plurals>
+    <string name="parent_gate_wrong">Not quite. Try again.</string>
+    <string name="parent_gate_cancel">Cancel</string>
+    <string name="parent_gate_enter">Enter</string>
+    <string name="parent_zone_child_name">Child name</string>
+    <string name="parent_zone_sound">Sound effects</string>
+    <string name="parent_zone_music">Background music</string>
+    <string name="parent_zone_language">App language</string>
+    <string name="parent_zone_theme">Theme</string>
+    <string name="parent_zone_theme_light">Light</string>
+    <string name="parent_zone_theme_dark">Dark</string>
+    <string name="language_english">English</string>
+    <string name="language_bangla">Bangla</string>
+    <string name="parent_zone_gate_toggle">Ask a maths question</string>
+    <string name="parent_zone_reset">Reset all progress</string>
+    <string name="parent_zone_reset_confirm">All stars, coins and badges will be cleared. This cannot be undone.</string>
+    <string name="parent_zone_reset_done">Progress reset</string>
+    <string name="parent_zone_reset_button">Reset</string>
+    <string name="parent_zone_about">About</string>
+    <string name="parent_zone_offline_note">Kids Learn works completely offline. It never connects to the internet and sends nothing anywhere.</string>
+    <string name="parent_zone_version">Version %1$s</string>
+    <string name="ok">OK</string>
+
+    <!--
+      Generic
+    -->
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="loading">Loading</string>
+    <string name="yay">Yay!</string>
+
+    <!--
+      Accessibility-only strings. Never displayed; they exist so TalkBack can
+      describe a purely visual element.
+    -->
+    <string name="cd_coin">Coin</string>
+    <plurals name="cd_module_progress">
+        <item quantity="one">%1$s: %2$d of %3$d complete</item>
+        <item quantity="other">%1$s: %2$d of %3$d complete</item>
+    </plurals>
+</resources>
