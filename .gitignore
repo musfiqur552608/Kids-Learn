@@ -9,6 +9,8 @@
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
+# Kotlin/IDE session files (compiler lock files, etc.) - never source.
+/.kotlin/
 /captures
 .externalNativeBuild
 .cxx

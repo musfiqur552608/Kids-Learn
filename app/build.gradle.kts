@@ -120,7 +120,7 @@ kotlin {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     // --- AndroidX foundation ---------------------------------------------------
     implementation(libs.androidx.core.ktx)
@@ -199,4 +199,19 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.compiler)
+}
+
+// Robolectric 4.14 pulls ASM 9.7.1, whose ClassReader rejects class file major
+// version 69 - the version this machine's only JDK (25) produces. Unit tests then
+// die with "Unsupported class file major version 69" the moment instrumentation
+// walks a type hierarchy into a JDK class. ASM 9.9 reads it, so lift ASM on the
+// unit-test classpaths only; the app itself still compiles to JVM 17.
+configurations.configureEach {
+    if (name.contains("UnitTest", ignoreCase = true)) {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.ow2.asm") {
+                useVersion("9.9")
+            }
+        }
+    }
 }

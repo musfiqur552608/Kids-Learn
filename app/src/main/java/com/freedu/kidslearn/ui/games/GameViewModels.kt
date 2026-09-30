@@ -487,7 +487,6 @@ class TimedQuizViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        super.onCleared()
         timerJob?.cancel()
     }
 

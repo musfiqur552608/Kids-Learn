@@ -37,6 +37,7 @@ navigation = "2.9.4"
 
 # --- Animation -----------------------------------------------------------------
 lottie = "6.7.1"
+desugar = "2.1.5"              # core library desugaring (java.time on minSdk 24)
 
 # --- Coroutines ----------------------------------------------------------------
 coroutines = "1.10.2"
@@ -107,6 +108,7 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 
 # --- Lottie -------------------------------------------------------------------
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
+desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar" }
 
 # --- Test ---------------------------------------------------------------------
 junit = { group = "junit", name = "junit", version.ref = "junit" }

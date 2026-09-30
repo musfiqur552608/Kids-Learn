@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """
-Generates the two Lottie animations bundled in app/src/main/res/raw.
+Generates the Lottie animation bundled in app/src/main/res/raw.
 
 Hand-authoring Lottie JSON is error-prone (Bezier easing handles, layer ordering,
 shape-group nesting). Generating it keeps the motion maths reviewable and lets us
 tune the "feel" in one place.
 
-Animations produced:
+Animation produced:
   * confetti.json   - celebration burst when a module / lesson is finished
-  * star_burst.json - small pop when a single star is earned
 
 Run:  python3 tools/generate_lottie.py
 Both are pure vector shape animations: no images, no network, tiny payload.
@@ -64,39 +63,6 @@ def rect_group(color, w, h, radius=3, rotation=0):
         "bm": 0,
     }
 
-
-def star_group(color, size):
-    """A 5-pointed star via a bezier path."""
-    outer = size
-    inner = size * 0.42
-    k = 0.5523  # circle-to-bezier constant, gives near-circular control points
-    pts = []
-    import math
-    for i in range(10):
-        r = outer if i % 2 == 0 else inner
-        a = -math.pi / 2 + i * math.pi / 5
-        pts.append((r * math.cos(a), r * math.sin(a)))
-    vertices, in_vec, out_vec = [], [], []
-    n = len(pts)
-    for i in range(n):
-        px, py = pts[i]
-        vx, vy = pts[(i + 1) % n]
-        vertices.append([round(px, 2), round(py, 2)])
-        out_vec.append([round(px + (vx - px) * k, 2), round(py + (vy - py) * k, 2)])
-        bx, by = pts[(i - 1) % n]
-        in_vec.append([round(px + (bx - px) * k, 2), round(py + (by - py) * k, 2)])
-    return {
-        "ty": "gr",
-        "nm": "star",
-        "it": [
-            {"ty": "sh", "d": 1, "ks": {"a": 0, "k": {
-                "c": True, "v": vertices, "i": in_vec, "o": out_vec}},
-             "nm": "star-path"},
-            fill(color),
-            transform(),
-        ],
-        "bm": 0,
-    }
 
 
 def kf(frames_values, ease_in=(0.35, 1.0), ease_out=(0.65, 0.0)):
@@ -186,53 +152,9 @@ def build_confetti(seed=7, width=400, height=400, count=26, frames=100):
     }
 
 
-def build_star_burst(seed=11, size=200, count=9):
-    rng = random.Random(seed)
-    layers = []
-    frames = 46
-    for i in range(count):
-        color = COLORS[i % len(COLORS)]
-        angle = 2 * math.pi * i / count
-        dist = 62
-        start_frame = rng.randint(0, 5)
-        end_frame = start_frame + rng.randint(26, 34)
-        x0, y0 = size / 2, size / 2
-        x1 = x0 + dist * math.cos(angle)
-        y1 = y0 + dist * math.sin(angle)
-        scale = kf([
-            (start_frame, [0, 0]),
-            (end_frame - 8, [100, 100]),
-            (end_frame, [40, 40]),
-        ])
-        pos = kf([(start_frame, [round(x0, 1), round(y0, 1), 0]),
-                  (end_frame, [round(x1, 1), round(y1, 1), 0])])
-        op_anim = kf([
-            (start_frame, [0]),
-            (start_frame + 3, [100]),
-            (end_frame - 10, [100]),
-            (end_frame, [0]),
-        ], ease_in=(0.3, 0.0), ease_out=(0.7, 1.0))
-        layers.append(layer(
-            i + 1, f"ray-{i}",
-            [star_group(color, 7.0)],
-            {"o": op_anim, "r": static(0), "p": pos,
-             "a": static([0, 0, 0]), "s": scale},
-            op=frames,
-        ))
-    return {
-        "v": "5.9.0", "fr": 60, "ip": 0, "op": frames,
-        "w": size, "h": size, "nm": "star_burst", "ddd": 0,
-        "assets": [], "layers": layers, "markers": [],
-    }
-
-
-import math  # noqa: E402  (used inside build_star_burst)
-
-
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
-    for name, doc in (("confetti.json", build_confetti()),
-                      ("star_burst.json", build_star_burst())):
+    for name, doc in (("confetti.json", build_confetti()),):
         path = os.path.join(OUT_DIR, name)
         with open(path, "w", encoding="utf-8") as f:
             json.dump(doc, f, separators=(",", ":"))

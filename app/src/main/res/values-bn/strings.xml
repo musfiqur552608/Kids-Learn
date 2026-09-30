@@ -16,7 +16,6 @@
     <string name="home_greeting">হ্যালো!</string>
     <string name="home_greeting_named">হ্যালো, %1$s!</string>
     <string name="home_subtitle">আজ কী শিখব?</string>
-    <string name="home_continue">শেখা চালিয়ে যাও</string>
     <string name="home_continue_with">শেখা চালিয়ে যাও: %1$s</string>
     <string name="home_modules">বিষয়</string>
 

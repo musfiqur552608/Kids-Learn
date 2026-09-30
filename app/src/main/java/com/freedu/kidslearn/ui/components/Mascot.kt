@@ -79,8 +79,8 @@ enum class MascotMood {
  */
 @Composable
 fun Mascot(
-    mood: MascotMood = MascotMood.HAPPY,
     modifier: Modifier = Modifier,
+    mood: MascotMood = MascotMood.HAPPY,
     size: androidx.compose.ui.unit.Dp = 96.dp,
 ) {
     val transition = rememberInfiniteTransition(label = "mascot-idle")
@@ -234,8 +234,8 @@ fun Mascot(
 @Composable
 fun MascotSpeech(
     message: String,
-    mood: MascotMood = MascotMood.HAPPY,
     modifier: Modifier = Modifier,
+    mood: MascotMood = MascotMood.HAPPY,
     showMascot: Boolean = true,
 ) {
     Row(

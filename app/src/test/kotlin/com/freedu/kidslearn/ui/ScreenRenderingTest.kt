@@ -46,6 +46,7 @@ import com.freedu.kidslearn.ui.quiz.QuizScreen
 import com.freedu.kidslearn.ui.quiz.QuizStage
 import com.freedu.kidslearn.ui.quiz.QuizUiState
 import com.freedu.kidslearn.ui.theme.KidsLearnTheme
+import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -218,9 +219,32 @@ class ScreenRenderingTest {
     @Test
     fun progressScreenRenders() {
         render { ProgressScreen(state = dashboard(), onBack = {}) }
-        // R.plurals.progress_badges_earned, one badge unlocked of however many
-        // the app ships.
-        compose.onNode(hasText("1 of ${BadgeKey.entries.size} earned")).assertExists()
+
+        // R.plurals.progress_percent, near the top of the list.
+        assertThat(
+            compose.onAllNodes(hasText("%", substring = true)).fetchSemanticsNodes(),
+        ).isNotEmpty()
+    }
+
+    @Test
+    fun progressScreenRendersBadgeTally() {
+        // Modules are omitted so the badge heading lands inside the first
+        // screenful: a LazyColumn never composes - and therefore never formats -
+        // an item the child would have to scroll to.
+        render {
+            ProgressScreen(
+                state = DashboardSnapshot(
+                    stats = UserStats(totalStars = 1),
+                    modules = emptyList(),
+                    badges = listOf(Badge(BadgeKey.FIRST_STEP, LocalDate.now())),
+                ),
+                onBack = {},
+            )
+        }
+        // R.plurals.progress_badges_earned.
+        compose.onNode(
+            hasText("1 of ${BadgeKey.entries.size} earned", substring = true),
+        ).assertExists()
     }
 
     @Test
@@ -364,8 +388,10 @@ class ScreenRenderingTest {
                 onDismissCelebration = {},
             )
         }
-        // R.plurals.result_stars_earned, plural form "other" -> "3 stars".
-        compose.onNode(hasText("You earned 3 stars")).assertExists()
+        // R.plurals.quiz_correct_count, plural form "other" -> "5 out of 5".
+        // `result_stars_earned` is also resolved here: it is an argument of the
+        // celebration overlay, so it formats during composition even while hidden.
+        compose.onNode(hasText("5 out of 5")).assertExists()
     }
 
     @Test
@@ -386,8 +412,10 @@ class ScreenRenderingTest {
                 onDismissCelebration = {},
             )
         }
-        // Same string, plural form "one" -> "1 star".
-        compose.onNode(hasText("You earned 1 star")).assertExists()
+        // Same plural, form "one" -> "1 out of 5"; `result_stars_earned` takes its
+        // "one" branch here ("You earned 1 star"), which is where a bad argument
+        // order would blow up.
+        compose.onNode(hasText("1 out of 5")).assertExists()
     }
 
     @Test

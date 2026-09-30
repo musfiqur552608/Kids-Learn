@@ -23,7 +23,7 @@ fun ModuleType.labelRes(): Int = when (this) {
     ModuleType.MATHS -> R.string.module_maths
 }
 
-@StringRes
+/** Emoji, not a resource: `@StringRes` would be a type error in waiting. */
 fun ModuleType.emoji(): String = when (this) {
     ModuleType.ENGLISH -> "🔤"
     ModuleType.BANGLA -> "🅱️"

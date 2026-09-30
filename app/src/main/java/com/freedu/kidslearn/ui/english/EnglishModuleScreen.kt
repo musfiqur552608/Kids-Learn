@@ -2,6 +2,7 @@ package com.freedu.kidslearn.ui.english
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.freedu.kidslearn.domain.model.LetterItem
@@ -20,7 +21,7 @@ import com.freedu.kidslearn.ui.alphabet.AlphabetUiState
 fun EnglishModuleScreen(
     onBack: () -> Unit,
     onTakeQuiz: (module: com.freedu.kidslearn.domain.model.ModuleType, itemId: String?) -> Unit,
-    modifier: androidx.compose.ui.Modifier = androidx.compose.ui.Modifier,
+    modifier: Modifier = Modifier,
     viewModel: EnglishViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()

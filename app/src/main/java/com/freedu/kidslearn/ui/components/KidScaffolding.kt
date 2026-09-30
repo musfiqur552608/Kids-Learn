@@ -48,9 +48,9 @@ import com.freedu.kidslearn.ui.theme.MinTouchTarget
 fun KidTopBar(
     title: String,
     moduleType: ModuleType?,
+    modifier: Modifier = Modifier,
     onBack: (() -> Unit)? = null,
     onReplayAudio: (() -> Unit)? = null,
-    modifier: Modifier = Modifier,
     trailingContent: @Composable (() -> Unit)? = null,
 ) {
     val accent = moduleType?.let { KidTheme.colors.accentFor(it) }
@@ -132,10 +132,10 @@ fun KidBackground(
 @Composable
 fun AnswerTile(
     label: String,
-    emoji: String? = null,
-    state: AnswerTileState = AnswerTileState.IDLE,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    emoji: String? = null,
+    state: AnswerTileState = AnswerTileState.IDLE,
     contentDescription: String? = null,
 ) {
     val kidColors = KidTheme.colors

@@ -22,12 +22,11 @@
     -->
 
     <!--
-      Declared so the app does not filter itself out of tablets/large phones in
-      the store, even though the UI is designed portrait-first.
+      Touch is assumed at runtime, but `android.hardware.touchscreen` is already
+      required by default, so declaring it again would only restate the implicit
+      rule. Multitouch is declared as *not* required so the app still installs on
+      single-touch devices instead of being filtered out of the store.
     -->
-    <uses-feature
-        android:name="android.hardware.touchscreen"
-        android:required="true" />
     <uses-feature
         android:name="android.hardware.touchscreen.multitouch"
         android:required="false" />
@@ -54,16 +53,22 @@
         android:theme="@style/Theme.KidsLearn"
         tools:targetApi="34">
 
+        <!--
+          Portrait lock is a product decision, not an oversight: the letter
+          grid, the tracing canvas and the quiz rows are all laid out for a tall
+          screen, and a child rotating the phone mid-lesson loses their place.
+          Android 16 deprecates fixed orientations in favour of resizable
+          windows, hence `DiscouragedApi` in the ignore below.
+        -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode|fontScale|smallestScreenSize|density"
-            android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.KidsLearn"
             android:windowSoftInputMode="adjustResize"
-            tools:ignore="LockedOrientationActivity">
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
