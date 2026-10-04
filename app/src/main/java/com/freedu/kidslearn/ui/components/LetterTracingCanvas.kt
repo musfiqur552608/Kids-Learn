@@ -2,7 +2,6 @@ package com.freedu.kidslearn.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,10 +18,13 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.freedu.kidslearn.ui.theme.KidTheme
 import kotlin.math.abs
@@ -109,10 +111,15 @@ fun LetterTracingCanvas(
     val userPath = remember { mutableStateListOf<Offset>() }
     var isDrawing by remember { mutableStateOf(false) }
     var quality by remember { mutableStateOf(TraceQuality.IDLE) }
+    // Pixel size of this canvas. Touches arrive in pixels but the guides live
+    // in 0..1, so every recorded point is normalised here, at record time -
+    // recording pixels and converting later is what made tracing unwinnable.
+    var canvasSize by remember { mutableStateOf(IntSize.Zero) }
 
     Box(
         modifier = modifier
             .background(guideBackground, RoundedCornerShape(28.dp))
+            .onSizeChanged { canvasSize = it }
             .semantics { contentDescription = "Tracing area for the letter $label" },
     ) {
         Canvas(
@@ -120,26 +127,39 @@ fun LetterTracingCanvas(
                 .fillMaxSize()
                 .pointerInput(enabled, guidePoints) {
                     if (!enabled) return@pointerInput
-                    detectDragGestures(
-                        onDragStart = { offset ->
-                            isDrawing = true
-                            quality = TraceQuality.IN_PROGRESS
-                            userPath.clear()
-                            userPath += offset
-                        },
-                        onDragEnd = {
-                            isDrawing = false
+                    // Hand-rolled instead of detectDragGestures for two child-driven
+                    // reasons: a tap that never passes touch slop must still end
+                    // the attempt (otherwise tapping does literally nothing), and
+                    // every move must be consumed so the surrounding LazyColumn
+                    // does not steal a trace as a scroll.
+                    awaitEachGesture {
+                        isDrawing = true
+                        quality = TraceQuality.IN_PROGRESS
+                        userPath.clear()
+                        try {
+                            // Every event is recorded, starting with the down
+                            // itself: a tap that never moves still ends here
+                            // (with one point, scoring IDLE) instead of doing
+                            // nothing, and every move is consumed so the
+                            // surrounding LazyColumn never steals a trace.
+                            while (true) {
+                                val pressed = awaitPointerEvent().changes
+                                    .filter { it.pressed }
+                                if (pressed.isEmpty()) break
+                                pressed.forEach {
+                                    it.consume()
+                                    userPath += it.position.normalizedBy(canvasSize)
+                                }
+                            }
                             val result = evaluateTrace(userPath.toList(), guidePoints)
                             quality = result.quality
                             onTraceFinished(result)
                             // The stroke stays on screen briefly so the child can see
                             // what they drew, then clears on the next attempt.
-                        },
-                        onDragCancel = { isDrawing = false },
-                        onDrag = { change, _ ->
-                            if (isDrawing) userPath += change.position
-                        },
-                    )
+                        } finally {
+                            isDrawing = false
+                        }
+                    }
                 },
         ) {
             val guideInPixels = guidePoints.map { Offset(it.x * size.width, it.y * size.height) }
@@ -166,7 +186,10 @@ fun LetterTracingCanvas(
 
             if (userPath.size > 1) {
                 drawPath(
-                    path = userPath.asPath(),
+                    // Stored normalised; scaled back to pixels for drawing.
+                    path = userPath
+                        .map { Offset(it.x * size.width, it.y * size.height) }
+                        .asPath(),
                     color = if (quality == TraceQuality.SUCCESS) successColor else accentColor,
                     style = Stroke(
                         width = USER_STROKE.toPx(),
@@ -193,7 +216,24 @@ private fun List<Offset>.asPath(): Path {
 }
 
 /**
+ * Maps a raw touch point into the guide's 0..1 box.
+ *
+ * Touches arrive in pixels; guides live normalised. Comparing the two spaces
+ * directly can never match (500px vs 0.5), which once made every trace score
+ * zero - so normalisation happens at record time, point by point, and this
+ * helper is the single place that does it.
+ */
+internal fun Offset.normalizedBy(size: IntSize): Offset {
+    if (size.width <= 0 || size.height <= 0) return this
+    return Offset(x / size.width, y / size.height)
+}
+
+/**
  * Scores a trace against the guide.
+ *
+ * Both [path] and [guidePoints] must already be normalised to 0..1 (see
+ * [normalizedBy]) - the tolerance below is in the same units, so feeding
+ * pixels here silently scores everything as a miss.
  *
  * Uses Chebyshev (square) distance rather than Euclidean so the tolerance region
  * is a square. For a tracing tolerance, square is the better shape: a child's

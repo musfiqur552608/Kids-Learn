@@ -44,7 +44,8 @@ object GlyphTrace {
         do {
             lengths.add(measure.length)
         } while (measure.nextContour())
-        if (lengths.sum() <= 0f) return fallback()
+        val total = lengths.sum()
+        if (total <= 0f) return fallback()
 
         val points = mutableListOf<Offset>()
         measure.setPath(path, false)
@@ -52,10 +53,13 @@ object GlyphTrace {
         val position = FloatArray(2)
         do {
             val length = lengths[contour++]
-            val count = max(3, (samples * length / lengths.sum()).roundToInt())
+            val count = max(3, (samples * length / total).roundToInt())
             for (i in 0 until count) {
-                measure.getPosTan(length * i / count, position, null)
-                points.add(Offset(position[0], position[1]))
+                // A false return leaves stale coordinates behind; only kept
+                // points count toward the coverage score.
+                if (measure.getPosTan(length * i / count, position, null)) {
+                    points.add(Offset(position[0], position[1]))
+                }
             }
         } while (measure.nextContour())
         return normalize(points).ifEmpty { fallback() }

@@ -99,6 +99,45 @@ class LetterTracingCanvasTest {
     }
 
     @Test
+    fun `touch points are normalised to the guide space`() {
+        val size = androidx.compose.ui.unit.IntSize(1000, 2000)
+
+        assertThat(Offset(500f, 1000f).normalizedBy(size)).isEqualTo(Offset(0.5f, 0.5f))
+        assertThat(Offset(0f, 0f).normalizedBy(size)).isEqualTo(Offset(0f, 0f))
+        // Zero size (first frame, before layout) passes the point through rather
+        // than dividing by zero.
+        assertThat(Offset(7f, 9f).normalizedBy(androidx.compose.ui.unit.IntSize.Zero))
+            .isEqualTo(Offset(7f, 9f))
+    }
+
+    @Test
+    fun `a real finger trace down the guide passes`() {
+        // Regression: touches used to be recorded in raw pixels while guides
+        // are 0..1, so coverage was always 0 and tracing could never succeed.
+        // This replays the production flow - pixels in, normalise, score.
+        val canvas = androidx.compose.ui.unit.IntSize(1080, 1200)
+        val guide = guidePoints(
+            0.5f to 0.1f, 0.5f to 0.3f, 0.5f to 0.5f, 0.5f to 0.7f, 0.5f to 0.9f,
+        )
+        val fingerPixels = guide.map { Offset(it.x * canvas.width, it.y * canvas.height) }
+        val recorded = fingerPixels.map { it.normalizedBy(canvas) }
+
+        val result = evaluateTrace(recorded, guide)
+
+        assertThat(result.quality).isEqualTo(TraceQuality.SUCCESS)
+        assertThat(result.coverage).isWithin(0.01f).of(1f)
+    }
+
+    @Test
+    fun `raw pixels scored directly never match`() {
+        // Documents why normalisation exists: this is the old broken behaviour.
+        val guide = guidePoints(0.5f to 0.5f)
+        val rawPixels = List(20) { Offset(540f, 600f) }
+
+        assertThat(evaluateTrace(rawPixels, guide).coverage).isEqualTo(0f)
+    }
+
+    @Test
     fun `every guide produces a usable polyline`() {
         TraceGuide.entries.forEach { guide ->
             val points = guide.normalisedPoints()
