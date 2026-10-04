@@ -30,7 +30,6 @@ enum class ThemeMode {
 data class AppSettings(
     val uiLanguage: UiLanguage = UiLanguage.ENGLISH,
     val soundEnabled: Boolean = true,
-    val musicEnabled: Boolean = true,
     val childName: String = "",
     val themeMode: ThemeMode = ThemeMode.LIGHT,
     /** "Continue where you left off" on Home. */
@@ -52,6 +51,12 @@ data class QuizResult(
     val coinsEarned: Int,
     val itemIds: List<String>,
     val isNewPersonalBest: Boolean = false,
+    /**
+     * Badges unlocked by this exact run, for the result screen to celebrate.
+     * Without this the badge system would be write-only from the child's
+     * perspective: the row lands in Room and nothing on screen ever mentions it.
+     */
+    val newBadges: List<BadgeKey> = emptyList(),
 ) {
     val accuracy: Float
         get() = if (totalQuestions == 0) 0f else correctAnswers.toFloat() / totalQuestions
@@ -66,6 +71,8 @@ data class GameResult(
     val starsEarned: Int,
     val coinsEarned: Int,
     val isNewPersonalBest: Boolean = false,
+    /** Badges unlocked by this exact run - see [QuizResult.newBadges]. */
+    val newBadges: List<BadgeKey> = emptyList(),
 )
 
 /** Per-module roll-up for the progress dashboard. */

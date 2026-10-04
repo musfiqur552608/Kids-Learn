@@ -40,6 +40,7 @@ fun ArabicModuleScreen(
             onSelectLetter = viewModel::selectLetter,
             onClearSelection = viewModel::clearSelection,
             onPronounce = viewModel::pronounce,
+        onTraceComplete = viewModel::onTraceFinished,
             onTakeQuiz = { item -> onTakeQuiz(ModuleType.ARABIC, item?.id) },
             modifier = modifier,
         )

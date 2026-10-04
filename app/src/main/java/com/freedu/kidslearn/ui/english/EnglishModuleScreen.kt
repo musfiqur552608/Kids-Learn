@@ -34,6 +34,7 @@ fun EnglishModuleScreen(
         onSelectLetter = viewModel::selectLetter,
         onClearSelection = viewModel::clearSelection,
         onPronounce = viewModel::pronounce,
+        onTraceComplete = viewModel::onTraceFinished,
         onTakeQuiz = { item: LetterItem? ->
             onTakeQuiz(com.freedu.kidslearn.domain.model.ModuleType.ENGLISH, item?.id)
         },

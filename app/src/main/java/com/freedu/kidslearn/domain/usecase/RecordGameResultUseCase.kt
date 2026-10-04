@@ -54,7 +54,7 @@ class RecordGameResultUseCase @Inject constructor(
         val modules = statsRepository.observeModuleProgress().first()
         val unlocked = statsRepository.observeBadges().first().map { it.badgeKey }.toSet()
         val earned = evaluateBadges(stats, modules, unlocked)
-        if (earned.isNotEmpty()) statsRepository.unlockBadges(earned, today)
+        val newlyUnlocked = if (earned.isEmpty()) emptyList() else statsRepository.unlockBadges(earned, today)
 
         return GameResult(
             gameType = gameType,
@@ -64,6 +64,7 @@ class RecordGameResultUseCase @Inject constructor(
             starsEarned = stars,
             coinsEarned = coins,
             isNewPersonalBest = isNewBest,
+            newBadges = newlyUnlocked,
         )
     }
 }

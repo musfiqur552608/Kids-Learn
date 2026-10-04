@@ -23,10 +23,15 @@ fun ModuleType.labelRes(): Int = when (this) {
     ModuleType.MATHS -> R.string.module_maths
 }
 
-/** Emoji, not a resource: `@StringRes` would be a type error in waiting. */
+/**
+ * Tile glyph, not a resource.
+ *
+ * Bangla shows its first vowel rather than 🅱️: a Latin B in a square reads as
+ * the *English* module to a child navigating by shape and colour.
+ */
 fun ModuleType.emoji(): String = when (this) {
     ModuleType.ENGLISH -> "🔤"
-    ModuleType.BANGLA -> "🅱️"
+    ModuleType.BANGLA -> "অ"
     ModuleType.ARABIC -> "🕌"
     ModuleType.MATHS -> "🔢"
 }
@@ -49,6 +54,7 @@ fun com.freedu.kidslearn.domain.model.GameType.titleRes(): Int = when (this) {
     com.freedu.kidslearn.domain.model.GameType.MEMORY_MATCH -> R.string.game_memory_match
     com.freedu.kidslearn.domain.model.GameType.FIND_THE_CORRECT_ONE -> R.string.game_find_correct
     com.freedu.kidslearn.domain.model.GameType.TIMED_QUIZ -> R.string.game_timed_quiz
+    com.freedu.kidslearn.domain.model.GameType.ODD_ONE_OUT -> R.string.game_odd_one_out
 }
 
 @StringRes
@@ -56,6 +62,7 @@ fun com.freedu.kidslearn.domain.model.GameType.subtitleRes(): Int = when (this) 
     com.freedu.kidslearn.domain.model.GameType.MEMORY_MATCH -> R.string.game_memory_match_subtitle
     com.freedu.kidslearn.domain.model.GameType.FIND_THE_CORRECT_ONE -> R.string.game_find_correct_subtitle
     com.freedu.kidslearn.domain.model.GameType.TIMED_QUIZ -> R.string.game_timed_quiz_subtitle
+    com.freedu.kidslearn.domain.model.GameType.ODD_ONE_OUT -> R.string.game_odd_one_out_subtitle
 }
 
 @StringRes
@@ -77,7 +84,7 @@ fun com.freedu.kidslearn.domain.model.BadgeKey.emoji(): String = when (this) {
     com.freedu.kidslearn.domain.model.BadgeKey.FIRST_STEP -> "👣"
     com.freedu.kidslearn.domain.model.BadgeKey.FIRST_PERFECT -> "🎯"
     com.freedu.kidslearn.domain.model.BadgeKey.ENGLISH_STAR -> "🔤"
-    com.freedu.kidslearn.domain.model.BadgeKey.BANGLA_STAR -> "🅱️"
+    com.freedu.kidslearn.domain.model.BadgeKey.BANGLA_STAR -> "অ"
     com.freedu.kidslearn.domain.model.BadgeKey.ARABIC_STAR -> "🕌"
     com.freedu.kidslearn.domain.model.BadgeKey.MATHS_STAR -> "🔢"
     com.freedu.kidslearn.domain.model.BadgeKey.COLLECTOR_10 -> "⭐"

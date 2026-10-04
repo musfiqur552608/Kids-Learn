@@ -177,6 +177,17 @@ class KidsDatabaseTest {
         assertThat(recent).hasSize(5)
     }
 
+    @Test
+    fun scoresSince_onlyReturnsTheWindow() = runTest {
+        gameDao.insert(GameScoreEntity(gameType = "TIMED_QUIZ", score = 1, playedAt = "2026-09-27"))
+        gameDao.insert(GameScoreEntity(gameType = "TIMED_QUIZ", score = 2, playedAt = "2026-09-28"))
+        gameDao.insert(GameScoreEntity(gameType = "TIMED_QUIZ", score = 3, playedAt = "2026-10-04"))
+
+        val window = gameDao.observeSince("2026-09-28").first()
+
+        assertThat(window.map { it.score }).containsExactly(2, 3).inOrder()
+    }
+
     // ----------------------------------------------------------------- badges
 
     @Test

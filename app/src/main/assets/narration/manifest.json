@@ -1,0 +1,1220 @@
+{
+ "version": 1,
+ "entries": [
+  {
+   "text": "A. A for Apple",
+   "locale": "en-US",
+   "file": "en_l01.mp3"
+  },
+  {
+   "text": "Apple",
+   "locale": "en-US",
+   "file": "en_w01.mp3"
+  },
+  {
+   "text": "B. B for Ball",
+   "locale": "en-US",
+   "file": "en_l02.mp3"
+  },
+  {
+   "text": "Ball",
+   "locale": "en-US",
+   "file": "en_w02.mp3"
+  },
+  {
+   "text": "C. C for Cat",
+   "locale": "en-US",
+   "file": "en_l03.mp3"
+  },
+  {
+   "text": "Cat",
+   "locale": "en-US",
+   "file": "en_w03.mp3"
+  },
+  {
+   "text": "D. D for Dog",
+   "locale": "en-US",
+   "file": "en_l04.mp3"
+  },
+  {
+   "text": "Dog",
+   "locale": "en-US",
+   "file": "en_w04.mp3"
+  },
+  {
+   "text": "E. E for Egg",
+   "locale": "en-US",
+   "file": "en_l05.mp3"
+  },
+  {
+   "text": "Egg",
+   "locale": "en-US",
+   "file": "en_w05.mp3"
+  },
+  {
+   "text": "F. F for Fish",
+   "locale": "en-US",
+   "file": "en_l06.mp3"
+  },
+  {
+   "text": "Fish",
+   "locale": "en-US",
+   "file": "en_w06.mp3"
+  },
+  {
+   "text": "G. G for Goat",
+   "locale": "en-US",
+   "file": "en_l07.mp3"
+  },
+  {
+   "text": "Goat",
+   "locale": "en-US",
+   "file": "en_w07.mp3"
+  },
+  {
+   "text": "H. H for Hat",
+   "locale": "en-US",
+   "file": "en_l08.mp3"
+  },
+  {
+   "text": "Hat",
+   "locale": "en-US",
+   "file": "en_w08.mp3"
+  },
+  {
+   "text": "I. I for Ice cream",
+   "locale": "en-US",
+   "file": "en_l09.mp3"
+  },
+  {
+   "text": "Ice cream",
+   "locale": "en-US",
+   "file": "en_w09.mp3"
+  },
+  {
+   "text": "J. J for Juice",
+   "locale": "en-US",
+   "file": "en_l10.mp3"
+  },
+  {
+   "text": "Juice",
+   "locale": "en-US",
+   "file": "en_w10.mp3"
+  },
+  {
+   "text": "K. K for Kite",
+   "locale": "en-US",
+   "file": "en_l11.mp3"
+  },
+  {
+   "text": "Kite",
+   "locale": "en-US",
+   "file": "en_w11.mp3"
+  },
+  {
+   "text": "L. L for Lion",
+   "locale": "en-US",
+   "file": "en_l12.mp3"
+  },
+  {
+   "text": "Lion",
+   "locale": "en-US",
+   "file": "en_w12.mp3"
+  },
+  {
+   "text": "M. M for Moon",
+   "locale": "en-US",
+   "file": "en_l13.mp3"
+  },
+  {
+   "text": "Moon",
+   "locale": "en-US",
+   "file": "en_w13.mp3"
+  },
+  {
+   "text": "N. N for Nest",
+   "locale": "en-US",
+   "file": "en_l14.mp3"
+  },
+  {
+   "text": "Nest",
+   "locale": "en-US",
+   "file": "en_w14.mp3"
+  },
+  {
+   "text": "O. O for Orange",
+   "locale": "en-US",
+   "file": "en_l15.mp3"
+  },
+  {
+   "text": "Orange",
+   "locale": "en-US",
+   "file": "en_w15.mp3"
+  },
+  {
+   "text": "P. P for Parrot",
+   "locale": "en-US",
+   "file": "en_l16.mp3"
+  },
+  {
+   "text": "Parrot",
+   "locale": "en-US",
+   "file": "en_w16.mp3"
+  },
+  {
+   "text": "Q. Q for Queen",
+   "locale": "en-US",
+   "file": "en_l17.mp3"
+  },
+  {
+   "text": "Queen",
+   "locale": "en-US",
+   "file": "en_w17.mp3"
+  },
+  {
+   "text": "R. R for Rabbit",
+   "locale": "en-US",
+   "file": "en_l18.mp3"
+  },
+  {
+   "text": "Rabbit",
+   "locale": "en-US",
+   "file": "en_w18.mp3"
+  },
+  {
+   "text": "S. S for Sun",
+   "locale": "en-US",
+   "file": "en_l19.mp3"
+  },
+  {
+   "text": "Sun",
+   "locale": "en-US",
+   "file": "en_w19.mp3"
+  },
+  {
+   "text": "T. T for Tree",
+   "locale": "en-US",
+   "file": "en_l20.mp3"
+  },
+  {
+   "text": "Tree",
+   "locale": "en-US",
+   "file": "en_w20.mp3"
+  },
+  {
+   "text": "U. U for Umbrella",
+   "locale": "en-US",
+   "file": "en_l21.mp3"
+  },
+  {
+   "text": "Umbrella",
+   "locale": "en-US",
+   "file": "en_w21.mp3"
+  },
+  {
+   "text": "V. V for Van",
+   "locale": "en-US",
+   "file": "en_l22.mp3"
+  },
+  {
+   "text": "Van",
+   "locale": "en-US",
+   "file": "en_w22.mp3"
+  },
+  {
+   "text": "W. W for Watch",
+   "locale": "en-US",
+   "file": "en_l23.mp3"
+  },
+  {
+   "text": "Watch",
+   "locale": "en-US",
+   "file": "en_w23.mp3"
+  },
+  {
+   "text": "X. X for Xmas tree",
+   "locale": "en-US",
+   "file": "en_l24.mp3"
+  },
+  {
+   "text": "Xmas tree",
+   "locale": "en-US",
+   "file": "en_w24.mp3"
+  },
+  {
+   "text": "Y. Y for Yo-yo",
+   "locale": "en-US",
+   "file": "en_l25.mp3"
+  },
+  {
+   "text": "Yo-yo",
+   "locale": "en-US",
+   "file": "en_w25.mp3"
+  },
+  {
+   "text": "Z. Z for Zebra",
+   "locale": "en-US",
+   "file": "en_l26.mp3"
+  },
+  {
+   "text": "Zebra",
+   "locale": "en-US",
+   "file": "en_w26.mp3"
+  },
+  {
+   "text": "অ, অজগর",
+   "locale": "bn-BD",
+   "file": "bn_l01.mp3"
+  },
+  {
+   "text": "অজগর",
+   "locale": "bn-BD",
+   "file": "bn_w01.mp3"
+  },
+  {
+   "text": "আ, আঙুল",
+   "locale": "bn-BD",
+   "file": "bn_l02.mp3"
+  },
+  {
+   "text": "আঙুল",
+   "locale": "bn-BD",
+   "file": "bn_w02.mp3"
+  },
+  {
+   "text": "ই, ইঁদুর",
+   "locale": "bn-BD",
+   "file": "bn_l03.mp3"
+  },
+  {
+   "text": "ইঁদুর",
+   "locale": "bn-BD",
+   "file": "bn_w03.mp3"
+  },
+  {
+   "text": "ঈ, ঈগল",
+   "locale": "bn-BD",
+   "file": "bn_l04.mp3"
+  },
+  {
+   "text": "ঈগল",
+   "locale": "bn-BD",
+   "file": "bn_w04.mp3"
+  },
+  {
+   "text": "উ, উট",
+   "locale": "bn-BD",
+   "file": "bn_l05.mp3"
+  },
+  {
+   "text": "উট",
+   "locale": "bn-BD",
+   "file": "bn_w05.mp3"
+  },
+  {
+   "text": "ঊ, ঊষা",
+   "locale": "bn-BD",
+   "file": "bn_l06.mp3"
+  },
+  {
+   "text": "ঊষা",
+   "locale": "bn-BD",
+   "file": "bn_w06.mp3"
+  },
+  {
+   "text": "ঋ, ঋষি",
+   "locale": "bn-BD",
+   "file": "bn_l07.mp3"
+  },
+  {
+   "text": "ঋষি",
+   "locale": "bn-BD",
+   "file": "bn_w07.mp3"
+  },
+  {
+   "text": "এ, এক",
+   "locale": "bn-BD",
+   "file": "bn_l08.mp3"
+  },
+  {
+   "text": "এক",
+   "locale": "bn-BD",
+   "file": "bn_w08.mp3"
+  },
+  {
+   "text": "ঐ, ঐক্য",
+   "locale": "bn-BD",
+   "file": "bn_l09.mp3"
+  },
+  {
+   "text": "ঐক্য",
+   "locale": "bn-BD",
+   "file": "bn_w09.mp3"
+  },
+  {
+   "text": "ও, ওড়না",
+   "locale": "bn-BD",
+   "file": "bn_l10.mp3"
+  },
+  {
+   "text": "ওড়না",
+   "locale": "bn-BD",
+   "file": "bn_w10.mp3"
+  },
+  {
+   "text": "ঔ, ঔষধ",
+   "locale": "bn-BD",
+   "file": "bn_l11.mp3"
+  },
+  {
+   "text": "ঔষধ",
+   "locale": "bn-BD",
+   "file": "bn_w11.mp3"
+  },
+  {
+   "text": "ক, কমলা",
+   "locale": "bn-BD",
+   "file": "bn_l12.mp3"
+  },
+  {
+   "text": "কমলা",
+   "locale": "bn-BD",
+   "file": "bn_w12.mp3"
+  },
+  {
+   "text": "খ, খরগোশ",
+   "locale": "bn-BD",
+   "file": "bn_l13.mp3"
+  },
+  {
+   "text": "খরগোশ",
+   "locale": "bn-BD",
+   "file": "bn_w13.mp3"
+  },
+  {
+   "text": "গ, গাছ",
+   "locale": "bn-BD",
+   "file": "bn_l14.mp3"
+  },
+  {
+   "text": "গাছ",
+   "locale": "bn-BD",
+   "file": "bn_w14.mp3"
+  },
+  {
+   "text": "ঘ, ঘড়ি",
+   "locale": "bn-BD",
+   "file": "bn_l15.mp3"
+  },
+  {
+   "text": "ঘড়ি",
+   "locale": "bn-BD",
+   "file": "bn_w15.mp3"
+  },
+  {
+   "text": "ঙ, রঙ",
+   "locale": "bn-BD",
+   "file": "bn_l16.mp3"
+  },
+  {
+   "text": "রঙ",
+   "locale": "bn-BD",
+   "file": "bn_w16.mp3"
+  },
+  {
+   "text": "চ, চাবি",
+   "locale": "bn-BD",
+   "file": "bn_l17.mp3"
+  },
+  {
+   "text": "চাবি",
+   "locale": "bn-BD",
+   "file": "bn_w17.mp3"
+  },
+  {
+   "text": "ছ, ছাতা",
+   "locale": "bn-BD",
+   "file": "bn_l18.mp3"
+  },
+  {
+   "text": "ছাতা",
+   "locale": "bn-BD",
+   "file": "bn_w18.mp3"
+  },
+  {
+   "text": "জ, জাহাজ",
+   "locale": "bn-BD",
+   "file": "bn_l19.mp3"
+  },
+  {
+   "text": "জাহাজ",
+   "locale": "bn-BD",
+   "file": "bn_w19.mp3"
+  },
+  {
+   "text": "ঝ, ঝুড়ি",
+   "locale": "bn-BD",
+   "file": "bn_l20.mp3"
+  },
+  {
+   "text": "ঝুড়ি",
+   "locale": "bn-BD",
+   "file": "bn_w20.mp3"
+  },
+  {
+   "text": "ঞ, অঞ্জলি",
+   "locale": "bn-BD",
+   "file": "bn_l21.mp3"
+  },
+  {
+   "text": "অঞ্জলি",
+   "locale": "bn-BD",
+   "file": "bn_w21.mp3"
+  },
+  {
+   "text": "ট, টমেটো",
+   "locale": "bn-BD",
+   "file": "bn_l22.mp3"
+  },
+  {
+   "text": "টমেটো",
+   "locale": "bn-BD",
+   "file": "bn_w22.mp3"
+  },
+  {
+   "text": "ঠ, ঠোঁট",
+   "locale": "bn-BD",
+   "file": "bn_l23.mp3"
+  },
+  {
+   "text": "ঠোঁট",
+   "locale": "bn-BD",
+   "file": "bn_w23.mp3"
+  },
+  {
+   "text": "ড, ডাব",
+   "locale": "bn-BD",
+   "file": "bn_l24.mp3"
+  },
+  {
+   "text": "ডাব",
+   "locale": "bn-BD",
+   "file": "bn_w24.mp3"
+  },
+  {
+   "text": "ঢ, ঢাকা",
+   "locale": "bn-BD",
+   "file": "bn_l25.mp3"
+  },
+  {
+   "text": "ঢাকা",
+   "locale": "bn-BD",
+   "file": "bn_w25.mp3"
+  },
+  {
+   "text": "ণ, কণ্ঠ",
+   "locale": "bn-BD",
+   "file": "bn_l26.mp3"
+  },
+  {
+   "text": "কণ্ঠ",
+   "locale": "bn-BD",
+   "file": "bn_w26.mp3"
+  },
+  {
+   "text": "ত, তাল",
+   "locale": "bn-BD",
+   "file": "bn_l27.mp3"
+  },
+  {
+   "text": "তাল",
+   "locale": "bn-BD",
+   "file": "bn_w27.mp3"
+  },
+  {
+   "text": "থ, থালা",
+   "locale": "bn-BD",
+   "file": "bn_l28.mp3"
+  },
+  {
+   "text": "থালা",
+   "locale": "bn-BD",
+   "file": "bn_w28.mp3"
+  },
+  {
+   "text": "দ, দোকান",
+   "locale": "bn-BD",
+   "file": "bn_l29.mp3"
+  },
+  {
+   "text": "দোকান",
+   "locale": "bn-BD",
+   "file": "bn_w29.mp3"
+  },
+  {
+   "text": "ধ, ধনুক",
+   "locale": "bn-BD",
+   "file": "bn_l30.mp3"
+  },
+  {
+   "text": "ধনুক",
+   "locale": "bn-BD",
+   "file": "bn_w30.mp3"
+  },
+  {
+   "text": "ন, নৌকা",
+   "locale": "bn-BD",
+   "file": "bn_l31.mp3"
+  },
+  {
+   "text": "নৌকা",
+   "locale": "bn-BD",
+   "file": "bn_w31.mp3"
+  },
+  {
+   "text": "প, পাখি",
+   "locale": "bn-BD",
+   "file": "bn_l32.mp3"
+  },
+  {
+   "text": "পাখি",
+   "locale": "bn-BD",
+   "file": "bn_w32.mp3"
+  },
+  {
+   "text": "ফ, ফুল",
+   "locale": "bn-BD",
+   "file": "bn_l33.mp3"
+  },
+  {
+   "text": "ফুল",
+   "locale": "bn-BD",
+   "file": "bn_w33.mp3"
+  },
+  {
+   "text": "ব, বই",
+   "locale": "bn-BD",
+   "file": "bn_l34.mp3"
+  },
+  {
+   "text": "বই",
+   "locale": "bn-BD",
+   "file": "bn_w34.mp3"
+  },
+  {
+   "text": "ভ, ভাত",
+   "locale": "bn-BD",
+   "file": "bn_l35.mp3"
+  },
+  {
+   "text": "ভাত",
+   "locale": "bn-BD",
+   "file": "bn_w35.mp3"
+  },
+  {
+   "text": "ম, মিষ্টি",
+   "locale": "bn-BD",
+   "file": "bn_l36.mp3"
+  },
+  {
+   "text": "মিষ্টি",
+   "locale": "bn-BD",
+   "file": "bn_w36.mp3"
+  },
+  {
+   "text": "য, যান",
+   "locale": "bn-BD",
+   "file": "bn_l37.mp3"
+  },
+  {
+   "text": "যান",
+   "locale": "bn-BD",
+   "file": "bn_w37.mp3"
+  },
+  {
+   "text": "র, রবি",
+   "locale": "bn-BD",
+   "file": "bn_l38.mp3"
+  },
+  {
+   "text": "রবি",
+   "locale": "bn-BD",
+   "file": "bn_w38.mp3"
+  },
+  {
+   "text": "ল, লাল",
+   "locale": "bn-BD",
+   "file": "bn_l39.mp3"
+  },
+  {
+   "text": "লাল",
+   "locale": "bn-BD",
+   "file": "bn_w39.mp3"
+  },
+  {
+   "text": "শ, শিশু",
+   "locale": "bn-BD",
+   "file": "bn_l40.mp3"
+  },
+  {
+   "text": "শিশু",
+   "locale": "bn-BD",
+   "file": "bn_w40.mp3"
+  },
+  {
+   "text": "ষ, ষাঁড়",
+   "locale": "bn-BD",
+   "file": "bn_l41.mp3"
+  },
+  {
+   "text": "ষাঁড়",
+   "locale": "bn-BD",
+   "file": "bn_w41.mp3"
+  },
+  {
+   "text": "স, সমুদ্র",
+   "locale": "bn-BD",
+   "file": "bn_l42.mp3"
+  },
+  {
+   "text": "সমুদ্র",
+   "locale": "bn-BD",
+   "file": "bn_w42.mp3"
+  },
+  {
+   "text": "হ, হাত",
+   "locale": "bn-BD",
+   "file": "bn_l43.mp3"
+  },
+  {
+   "text": "হাত",
+   "locale": "bn-BD",
+   "file": "bn_w43.mp3"
+  },
+  {
+   "text": "ড়, বাড়ি",
+   "locale": "bn-BD",
+   "file": "bn_l44.mp3"
+  },
+  {
+   "text": "বাড়ি",
+   "locale": "bn-BD",
+   "file": "bn_w44.mp3"
+  },
+  {
+   "text": "ঢ়, আষাঢ়",
+   "locale": "bn-BD",
+   "file": "bn_l45.mp3"
+  },
+  {
+   "text": "আষাঢ়",
+   "locale": "bn-BD",
+   "file": "bn_w45.mp3"
+  },
+  {
+   "text": "য়, ময়ূর",
+   "locale": "bn-BD",
+   "file": "bn_l46.mp3"
+  },
+  {
+   "text": "ময়ূর",
+   "locale": "bn-BD",
+   "file": "bn_w46.mp3"
+  },
+  {
+   "text": "ا, أَسَد",
+   "locale": "ar-SA",
+   "file": "ar_l01.mp3"
+  },
+  {
+   "text": "أَسَد",
+   "locale": "ar-SA",
+   "file": "ar_w01.mp3"
+  },
+  {
+   "text": "و, وَرْدَة",
+   "locale": "ar-SA",
+   "file": "ar_l02.mp3"
+  },
+  {
+   "text": "وَرْدَة",
+   "locale": "ar-SA",
+   "file": "ar_w02.mp3"
+  },
+  {
+   "text": "ي, يَد",
+   "locale": "ar-SA",
+   "file": "ar_l03.mp3"
+  },
+  {
+   "text": "يَد",
+   "locale": "ar-SA",
+   "file": "ar_w03.mp3"
+  },
+  {
+   "text": "ب, بَطَّة",
+   "locale": "ar-SA",
+   "file": "ar_l04.mp3"
+  },
+  {
+   "text": "بَطَّة",
+   "locale": "ar-SA",
+   "file": "ar_w04.mp3"
+  },
+  {
+   "text": "ت, تُفَّاحَة",
+   "locale": "ar-SA",
+   "file": "ar_l05.mp3"
+  },
+  {
+   "text": "تُفَّاحَة",
+   "locale": "ar-SA",
+   "file": "ar_w05.mp3"
+  },
+  {
+   "text": "ث, ثَعْلَب",
+   "locale": "ar-SA",
+   "file": "ar_l06.mp3"
+  },
+  {
+   "text": "ثَعْلَب",
+   "locale": "ar-SA",
+   "file": "ar_w06.mp3"
+  },
+  {
+   "text": "ج, جَمَل",
+   "locale": "ar-SA",
+   "file": "ar_l07.mp3"
+  },
+  {
+   "text": "جَمَل",
+   "locale": "ar-SA",
+   "file": "ar_w07.mp3"
+  },
+  {
+   "text": "ح, حُوت",
+   "locale": "ar-SA",
+   "file": "ar_l08.mp3"
+  },
+  {
+   "text": "حُوت",
+   "locale": "ar-SA",
+   "file": "ar_w08.mp3"
+  },
+  {
+   "text": "خ, خَرُوف",
+   "locale": "ar-SA",
+   "file": "ar_l09.mp3"
+  },
+  {
+   "text": "خَرُوف",
+   "locale": "ar-SA",
+   "file": "ar_w09.mp3"
+  },
+  {
+   "text": "د, دُبّ",
+   "locale": "ar-SA",
+   "file": "ar_l10.mp3"
+  },
+  {
+   "text": "دُبّ",
+   "locale": "ar-SA",
+   "file": "ar_w10.mp3"
+  },
+  {
+   "text": "ذ, ذُرَة",
+   "locale": "ar-SA",
+   "file": "ar_l11.mp3"
+  },
+  {
+   "text": "ذُرَة",
+   "locale": "ar-SA",
+   "file": "ar_w11.mp3"
+  },
+  {
+   "text": "ر, رَجُل",
+   "locale": "ar-SA",
+   "file": "ar_l12.mp3"
+  },
+  {
+   "text": "رَجُل",
+   "locale": "ar-SA",
+   "file": "ar_w12.mp3"
+  },
+  {
+   "text": "ز, زَرَافَة",
+   "locale": "ar-SA",
+   "file": "ar_l13.mp3"
+  },
+  {
+   "text": "زَرَافَة",
+   "locale": "ar-SA",
+   "file": "ar_w13.mp3"
+  },
+  {
+   "text": "س, سَمَك",
+   "locale": "ar-SA",
+   "file": "ar_l14.mp3"
+  },
+  {
+   "text": "سَمَك",
+   "locale": "ar-SA",
+   "file": "ar_w14.mp3"
+  },
+  {
+   "text": "ش, شَمْس",
+   "locale": "ar-SA",
+   "file": "ar_l15.mp3"
+  },
+  {
+   "text": "شَمْس",
+   "locale": "ar-SA",
+   "file": "ar_w15.mp3"
+  },
+  {
+   "text": "ص, صَقْر",
+   "locale": "ar-SA",
+   "file": "ar_l16.mp3"
+  },
+  {
+   "text": "صَقْر",
+   "locale": "ar-SA",
+   "file": "ar_w16.mp3"
+  },
+  {
+   "text": "ض, ضِفْدَع",
+   "locale": "ar-SA",
+   "file": "ar_l17.mp3"
+  },
+  {
+   "text": "ضِفْدَع",
+   "locale": "ar-SA",
+   "file": "ar_w17.mp3"
+  },
+  {
+   "text": "ط, طَائِرَة",
+   "locale": "ar-SA",
+   "file": "ar_l18.mp3"
+  },
+  {
+   "text": "طَائِرَة",
+   "locale": "ar-SA",
+   "file": "ar_w18.mp3"
+  },
+  {
+   "text": "ظ, ظَرْف",
+   "locale": "ar-SA",
+   "file": "ar_l19.mp3"
+  },
+  {
+   "text": "ظَرْف",
+   "locale": "ar-SA",
+   "file": "ar_w19.mp3"
+  },
+  {
+   "text": "ع, عَيْن",
+   "locale": "ar-SA",
+   "file": "ar_l20.mp3"
+  },
+  {
+   "text": "عَيْن",
+   "locale": "ar-SA",
+   "file": "ar_w20.mp3"
+  },
+  {
+   "text": "غ, غَيْمَة",
+   "locale": "ar-SA",
+   "file": "ar_l21.mp3"
+  },
+  {
+   "text": "غَيْمَة",
+   "locale": "ar-SA",
+   "file": "ar_w21.mp3"
+  },
+  {
+   "text": "ف, فِيل",
+   "locale": "ar-SA",
+   "file": "ar_l22.mp3"
+  },
+  {
+   "text": "فِيل",
+   "locale": "ar-SA",
+   "file": "ar_w22.mp3"
+  },
+  {
+   "text": "ق, قِطَّة",
+   "locale": "ar-SA",
+   "file": "ar_l23.mp3"
+  },
+  {
+   "text": "قِطَّة",
+   "locale": "ar-SA",
+   "file": "ar_w23.mp3"
+  },
+  {
+   "text": "ك, كِتَاب",
+   "locale": "ar-SA",
+   "file": "ar_l24.mp3"
+  },
+  {
+   "text": "كِتَاب",
+   "locale": "ar-SA",
+   "file": "ar_w24.mp3"
+  },
+  {
+   "text": "ل, لَيْمُون",
+   "locale": "ar-SA",
+   "file": "ar_l25.mp3"
+  },
+  {
+   "text": "لَيْمُون",
+   "locale": "ar-SA",
+   "file": "ar_w25.mp3"
+  },
+  {
+   "text": "م, مَوْز",
+   "locale": "ar-SA",
+   "file": "ar_l26.mp3"
+  },
+  {
+   "text": "مَوْز",
+   "locale": "ar-SA",
+   "file": "ar_w26.mp3"
+  },
+  {
+   "text": "ن, نَجْم",
+   "locale": "ar-SA",
+   "file": "ar_l27.mp3"
+  },
+  {
+   "text": "نَجْم",
+   "locale": "ar-SA",
+   "file": "ar_w27.mp3"
+  },
+  {
+   "text": "ه, هِلَال",
+   "locale": "ar-SA",
+   "file": "ar_l28.mp3"
+  },
+  {
+   "text": "هِلَال",
+   "locale": "ar-SA",
+   "file": "ar_w28.mp3"
+  },
+  {
+   "text": "One",
+   "locale": "en-US",
+   "file": "math_n01.mp3"
+  },
+  {
+   "text": "Two",
+   "locale": "en-US",
+   "file": "math_n02.mp3"
+  },
+  {
+   "text": "Three",
+   "locale": "en-US",
+   "file": "math_n03.mp3"
+  },
+  {
+   "text": "Four",
+   "locale": "en-US",
+   "file": "math_n04.mp3"
+  },
+  {
+   "text": "Five",
+   "locale": "en-US",
+   "file": "math_n05.mp3"
+  },
+  {
+   "text": "Six",
+   "locale": "en-US",
+   "file": "math_n06.mp3"
+  },
+  {
+   "text": "Seven",
+   "locale": "en-US",
+   "file": "math_n07.mp3"
+  },
+  {
+   "text": "Eight",
+   "locale": "en-US",
+   "file": "math_n08.mp3"
+  },
+  {
+   "text": "Nine",
+   "locale": "en-US",
+   "file": "math_n09.mp3"
+  },
+  {
+   "text": "Ten",
+   "locale": "en-US",
+   "file": "math_n10.mp3"
+  },
+  {
+   "text": "Eleven",
+   "locale": "en-US",
+   "file": "math_n11.mp3"
+  },
+  {
+   "text": "Twelve",
+   "locale": "en-US",
+   "file": "math_n12.mp3"
+  },
+  {
+   "text": "Thirteen",
+   "locale": "en-US",
+   "file": "math_n13.mp3"
+  },
+  {
+   "text": "Fourteen",
+   "locale": "en-US",
+   "file": "math_n14.mp3"
+  },
+  {
+   "text": "Fifteen",
+   "locale": "en-US",
+   "file": "math_n15.mp3"
+  },
+  {
+   "text": "Sixteen",
+   "locale": "en-US",
+   "file": "math_n16.mp3"
+  },
+  {
+   "text": "Seventeen",
+   "locale": "en-US",
+   "file": "math_n17.mp3"
+  },
+  {
+   "text": "Eighteen",
+   "locale": "en-US",
+   "file": "math_n18.mp3"
+  },
+  {
+   "text": "Nineteen",
+   "locale": "en-US",
+   "file": "math_n19.mp3"
+  },
+  {
+   "text": "Twenty",
+   "locale": "en-US",
+   "file": "math_n20.mp3"
+  },
+  {
+   "text": "Red",
+   "locale": "en-US",
+   "file": "math_s01.mp3"
+  },
+  {
+   "text": "Blue",
+   "locale": "en-US",
+   "file": "math_s02.mp3"
+  },
+  {
+   "text": "Yellow",
+   "locale": "en-US",
+   "file": "math_s03.mp3"
+  },
+  {
+   "text": "Green",
+   "locale": "en-US",
+   "file": "math_s04.mp3"
+  },
+  {
+   "text": "Purple",
+   "locale": "en-US",
+   "file": "math_s06.mp3"
+  },
+  {
+   "text": "Black",
+   "locale": "en-US",
+   "file": "math_s07.mp3"
+  },
+  {
+   "text": "White",
+   "locale": "en-US",
+   "file": "math_s08.mp3"
+  },
+  {
+   "text": "Circle",
+   "locale": "en-US",
+   "file": "math_s09.mp3"
+  },
+  {
+   "text": "Square",
+   "locale": "en-US",
+   "file": "math_s10.mp3"
+  },
+  {
+   "text": "Triangle",
+   "locale": "en-US",
+   "file": "math_s11.mp3"
+  },
+  {
+   "text": "Star",
+   "locale": "en-US",
+   "file": "math_s12.mp3"
+  },
+  {
+   "text": "Heart",
+   "locale": "en-US",
+   "file": "math_s13.mp3"
+  },
+  {
+   "text": "How many?",
+   "locale": "en-US",
+   "file": "prompt_howmany.mp3"
+  },
+  {
+   "text": "Great job!",
+   "locale": "en-US",
+   "file": "enc_en_01.mp3"
+  },
+  {
+   "text": "চমৎকার!",
+   "locale": "bn-BD",
+   "file": "enc_bn_01.mp3"
+  },
+  {
+   "text": "Well done!",
+   "locale": "en-US",
+   "file": "enc_en_02.mp3"
+  },
+  {
+   "text": "খুব ভালো!",
+   "locale": "bn-BD",
+   "file": "enc_bn_02.mp3"
+  },
+  {
+   "text": "Awesome!",
+   "locale": "en-US",
+   "file": "enc_en_03.mp3"
+  },
+  {
+   "text": "দারুণ!",
+   "locale": "bn-BD",
+   "file": "enc_bn_03.mp3"
+  },
+  {
+   "text": "You got it!",
+   "locale": "en-US",
+   "file": "enc_en_04.mp3"
+  },
+  {
+   "text": "পেরেছো!",
+   "locale": "bn-BD",
+   "file": "enc_bn_04.mp3"
+  },
+  {
+   "text": "Let's try that one again",
+   "locale": "en-US",
+   "file": "enc_en_05.mp3"
+  },
+  {
+   "text": "আবার চেষ্টা করো",
+   "locale": "bn-BD",
+   "file": "enc_bn_05.mp3"
+  }
+ ]
+}

@@ -109,6 +109,7 @@ class QuizFactory(
             correctIndex = options.indexOfFirst { it.id == item.id },
             speakText = "${item.exampleWord}",
             speakLocale = ttsLocale(moduleType),
+            subjectItemId = item.id,
         )
     }
 
@@ -120,16 +121,28 @@ class QuizFactory(
             it.letter != item.letter && it.visual != item.visual
         }
         val options = (distractors + item).shuffled(random)
+        // Options show the native word + picture, never the latin transliteration:
+        // a Bangla/Arabic child cannot read "kho"/"gh", and showing latin next to
+        // the emoji is exactly the "image not matched" parents reported.
+        // Speech reuses the exact lesson phrasing (see
+        // FeedbackPlayer.pronounceLesson) so every letter has a single bundled
+        // narration clip: the prompt already displays the letter, so speaking it
+        // reveals nothing extra.
+        val spoken = when (moduleType) {
+            ModuleType.ENGLISH -> "${item.letter}. ${item.letter} for ${item.exampleWord}"
+            else -> "${item.letter}, ${item.exampleWord}"
+        }
         return QuizQuestion(
             id = "q_let2pic_${item.id}",
             moduleType = moduleType,
             kind = QuizKind.LETTER_TO_PICTURE,
             promptVisual = "",
             promptLabel = item.letter,
-            options = options.map { AnswerOption(it.id, it.transliteration, it.visual) },
+            options = options.map { AnswerOption(it.id, it.exampleWord, it.visual) },
             correctIndex = options.indexOfFirst { it.id == item.id },
-            speakText = "${item.letter}. ${item.exampleWord}",
+            speakText = spoken,
             speakLocale = ttsLocale(moduleType),
+            subjectItemId = item.id,
         )
     }
 
@@ -159,6 +172,7 @@ class QuizFactory(
             correctIndex = options.indexOf(item.number),
             speakText = "How many?",
             speakLocale = ttsLocale(moduleType),
+            subjectItemId = item.id,
         )
     }
 
@@ -193,6 +207,7 @@ class QuizFactory(
                 correctIndex = options.indexOf(answer),
                 speakText = if (isAddition) "$a plus $b" else "$a minus $b",
                 speakLocale = ttsLocale(moduleType),
+                subjectItemId = item.id,
             )
         }
     }
@@ -215,6 +230,7 @@ class QuizFactory(
             correctIndex = options.indexOfFirst { it.id == item.id },
             speakText = item.shapeName,
             speakLocale = ttsLocale(moduleType),
+            subjectItemId = item.id,
         )
     }
 

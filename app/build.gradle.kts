@@ -30,17 +30,6 @@ android {
         vectorDrawables { useSupportLibrary = true }
     }
 
-    signingConfigs {
-        // Debug keeps the default auto-generated keystore. A release keystore is
-        // intentionally NOT committed; supply it via `local.properties` (see README).
-        getByName("debug") {
-            storeFile = file(System.getProperty("user.home") + "/.android/debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
-        }
-    }
-
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"

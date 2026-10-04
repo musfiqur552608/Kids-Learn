@@ -80,7 +80,6 @@ class SettingsRepositoryImpl @Inject constructor(
             AppSettings(
                 uiLanguage = UiLanguage.fromTag(prefs[Keys.UI_LANGUAGE]),
                 soundEnabled = prefs[Keys.SOUND_ENABLED] ?: true,
-                musicEnabled = prefs[Keys.MUSIC_ENABLED] ?: true,
                 childName = prefs[Keys.CHILD_NAME].orEmpty(),
                 themeMode = prefs[Keys.THEME_MODE]
                     ?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() }
@@ -95,8 +94,6 @@ class SettingsRepositoryImpl @Inject constructor(
         .distinctUntilChanged()
 
     override suspend fun setSoundEnabled(enabled: Boolean) = put(Keys.SOUND_ENABLED, enabled)
-
-    override suspend fun setMusicEnabled(enabled: Boolean) = put(Keys.MUSIC_ENABLED, enabled)
 
     override suspend fun setUiLanguage(language: UiLanguage) = put(Keys.UI_LANGUAGE, language.tag)
 
@@ -128,7 +125,6 @@ class SettingsRepositoryImpl @Inject constructor(
     private object Keys {
         val UI_LANGUAGE = stringPreferencesKey("ui_language")
         val SOUND_ENABLED = booleanPreferencesKey("sound_enabled")
-        val MUSIC_ENABLED = booleanPreferencesKey("music_enabled")
         val CHILD_NAME = stringPreferencesKey("child_name")
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val LAST_MODULE = stringPreferencesKey("last_module")

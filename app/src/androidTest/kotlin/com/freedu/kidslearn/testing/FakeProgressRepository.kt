@@ -8,7 +8,9 @@ import com.freedu.kidslearn.domain.model.GameType
 import com.freedu.kidslearn.domain.model.LessonProgress
 import com.freedu.kidslearn.domain.model.ModuleProgress
 import com.freedu.kidslearn.domain.model.ModuleType
+import com.freedu.kidslearn.data.repository.bucketWeekly
 import com.freedu.kidslearn.domain.model.UserStats
+import com.freedu.kidslearn.domain.model.WeeklyActivity
 import com.freedu.kidslearn.domain.repository.ProgressRepository
 import com.freedu.kidslearn.domain.repository.StatsRepository
 import kotlinx.coroutines.flow.Flow
@@ -99,6 +101,15 @@ class FakeProgressRepository : ProgressRepository, StatsRepository {
     ) { s, modules, b, scores ->
         DashboardSnapshot(stats = s, modules = modules, badges = b, recentScores = scores)
     }
+
+    override fun observeWeeklyActivity(today: LocalDate): Flow<WeeklyActivity> =
+        combine(lessons, games) { lessonRows, gameRows ->
+            bucketWeekly(
+                lessonDates = lessonRows.map { it.lastAttemptDate },
+                gameDates = gameRows.map { it.playedAt },
+                today = today,
+            )
+        }
 
     override suspend fun touchActivity(today: LocalDate): UserStats = stats.value
 

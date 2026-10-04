@@ -22,6 +22,12 @@ import com.freedu.kidslearn.domain.model.ModuleType
  * omitted. They are taught later, and introducing them here would make the catalog
  * 31 letters while claiming to be an alphabet of 28.
  *
+ * ## Transliteration
+ * The emphatic consonants take capitals (Sa Da Ta Za) so ص/س, ض/د, ط/ت and ظ/ز
+ * stay distinct without apostrophe hacks, and alif is "aa" (a long vowel) so it
+ * never collides with ayn's "a". The labels are display hints for the parent,
+ * never speech input - the engine always receives the Arabic script itself.
+ *
  * ## Rendering
  * Requires the bundled Noto Naskh Arabic font. The module UI additionally forces
  * `LayoutDirection.Rtl`; `exampleWord` carries optional short vowels (tashkeel) so
@@ -30,7 +36,7 @@ import com.freedu.kidslearn.domain.model.ModuleType
 internal object ArabicCatalog {
 
     val vowels: List<LetterItem> = listOf(
-        vowel("ا", "a", "أَسَد", "Lion", "🦁"),
+        vowel("ا", "aa", "أَسَد", "Lion", "🦁"),
         vowel("و", "u", "وَرْدَة", "Rose", "🌹"),
         vowel("ي", "i", "يَد", "Hand", "✋"),
     )
@@ -44,20 +50,20 @@ internal object ArabicCatalog {
         consonant("خ", "kh", "خَرُوف", "Sheep", "🐑"),
         consonant("د", "d", "دُبّ", "Bear", "🐻"),
         consonant("ذ", "dh", "ذُرَة", "Corn", "🌽"),
-        consonant("ر", "r", "رَقْص", "Dance", "💃"),
+        consonant("ر", "r", "رَجُل", "Man", "👨"),
         consonant("ز", "z", "زَرَافَة", "Giraffe", "🦒"),
         consonant("س", "s", "سَمَك", "Fish", "🐟"),
         consonant("ش", "sh", "شَمْس", "Sun", "☀️"),
-        consonant("ص", "s'", "صَقْر", "Falcon", "🦅"),
-        consonant("ض", "d'", "ضِفْدَع", "Frog", "🐸"),
-        consonant("ط", "t'", "طَائِرَة", "Airplane", "✈️"),
-        consonant("ظ", "z'", "حَظَب", "Firewood", "🪵"),
-        consonant("ع", "'", "عَيْن", "Eye", "👁️"),
-        consonant("غ", "gh", "غَزَال", "Gazelle", "🦌"),
+        consonant("ص", "Sa", "صَقْر", "Falcon", "🦅"),
+        consonant("ض", "Da", "ضِفْدَع", "Frog", "🐸"),
+        consonant("ط", "Ta", "طَائِرَة", "Airplane", "✈️"),
+        consonant("ظ", "Za", "ظَرْف", "Envelope", "✉️"),
+        consonant("ع", "a", "عَيْن", "Eye", "👁️"),
+        consonant("غ", "gh", "غَيْمَة", "Cloud", "☁️"),
         consonant("ف", "f", "فِيل", "Elephant", "🐘"),
-        consonant("ق", "q", "قِط", "Cat", "🐈"),
+        consonant("ق", "q", "قِطَّة", "Cat", "🐈"),
         consonant("ك", "k", "كِتَاب", "Book", "📗"),
-        consonant("ل", "l", "لَبَن", "Milk", "🥛"),
+        consonant("ل", "l", "لَيْمُون", "Lemon", "🍋"),
         consonant("م", "m", "مَوْز", "Banana", "🍌"),
         consonant("ن", "n", "نَجْم", "Star", "⭐"),
         consonant("ه", "h", "هِلَال", "Crescent", "🌙"),

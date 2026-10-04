@@ -12,8 +12,6 @@ interface SettingsRepository {
 
     suspend fun setSoundEnabled(enabled: Boolean)
 
-    suspend fun setMusicEnabled(enabled: Boolean)
-
     suspend fun setUiLanguage(language: UiLanguage)
 
     suspend fun setThemeMode(mode: ThemeMode)

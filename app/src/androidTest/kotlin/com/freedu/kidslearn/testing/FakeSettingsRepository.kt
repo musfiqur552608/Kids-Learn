@@ -20,10 +20,6 @@ class FakeSettingsRepository : SettingsRepository {
         state.value = state.value.copy(soundEnabled = enabled)
     }
 
-    override suspend fun setMusicEnabled(enabled: Boolean) {
-        state.value = state.value.copy(musicEnabled = enabled)
-    }
-
     override suspend fun setUiLanguage(language: UiLanguage) {
         state.value = state.value.copy(uiLanguage = language)
     }

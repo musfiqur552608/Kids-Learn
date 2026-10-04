@@ -10,7 +10,9 @@ import com.freedu.kidslearn.data.local.entity.UserStatsEntity
 import com.freedu.kidslearn.domain.model.Badge
 import com.freedu.kidslearn.domain.model.BadgeKey
 import com.freedu.kidslearn.domain.model.DashboardSnapshot
+import com.freedu.kidslearn.domain.model.DayActivity
 import com.freedu.kidslearn.domain.model.GameScore
+import com.freedu.kidslearn.domain.model.WeeklyActivity
 import com.freedu.kidslearn.domain.model.GameType
 import com.freedu.kidslearn.domain.model.LessonProgress
 import com.freedu.kidslearn.domain.model.ModuleProgress
@@ -190,6 +192,17 @@ class LocalProgressRepository @Inject constructor(
         )
     }
 
+    override fun observeWeeklyActivity(today: LocalDate): Flow<WeeklyActivity> = combine(
+        lessonProgressDao.observeAll(),
+        gameScoreDao.observeSince(DateCodec.encode(today.minusDays((WEEK_DAYS - 1).toLong()))),
+    ) { lessons, games ->
+        bucketWeekly(
+            lessonDates = lessons.map { DateCodec.decode(it.lastAttemptDate) },
+            gameDates = games.mapNotNull { DateCodec.decode(it.playedAt) },
+            today = today,
+        )
+    }
+
     override suspend fun touchActivity(today: LocalDate): UserStats {
         userStatsDao.ensureRow()
         val current = userStatsDao.get() ?: UserStatsEntity()
@@ -271,5 +284,39 @@ class LocalProgressRepository @Inject constructor(
 
     companion object {
         const val RECENT_SCORE_LIMIT = 10
+        const val WEEK_DAYS = 7
     }
+}
+
+/**
+ * Buckets lesson-attempt and game dates into the 7 days ending [today].
+ *
+ * Pure so it is unit-testable without Room: rows with a null or out-of-window
+ * date are ignored, and every day in the window is present even when empty.
+ */
+internal fun bucketWeekly(
+    lessonDates: List<LocalDate?>,
+    gameDates: List<LocalDate>,
+    today: LocalDate,
+    windowDays: Int = 7,
+): WeeklyActivity {
+    val start = today.minusDays((windowDays - 1).toLong())
+    val lessonsByDay = lessonDates.filterNotNull()
+        .filter { it in start..today }
+        .groupingBy { it }
+        .eachCount()
+    val gamesByDay = gameDates
+        .filter { it in start..today }
+        .groupingBy { it }
+        .eachCount()
+    return WeeklyActivity(
+        (0 until windowDays).map { offset ->
+            val date = start.plusDays(offset.toLong())
+            DayActivity(
+                date = date,
+                lessons = lessonsByDay[date] ?: 0,
+                games = gamesByDay[date] ?: 0,
+            )
+        },
+    )
 }

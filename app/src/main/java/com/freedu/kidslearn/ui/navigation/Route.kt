@@ -1,9 +1,5 @@
 package com.freedu.kidslearn.ui.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Circle
-import androidx.compose.material.icons.outlined.Circle
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.freedu.kidslearn.domain.model.ModuleType
 
 /**
@@ -26,32 +22,18 @@ sealed class Route(val pattern: String) {
     data object Home : Route("home")
 
     // --- Alphabet modules ------------------------------------------------------
-    // A single route serves all three alphabets, parameterised by module. See
-    // `AlphabetModuleScreen` for why the three are not separate graphs.
+    // A single route serves all three alphabets, parameterised by module, and
+    // the letter list / letter detail are ViewModel stages, not destinations.
+    // See `AlphabetModuleScreen` for why the three are not separate graphs.
     data object AlphabetModule : Route("module/alphabet/{module}") {
         const val ARG_MODULE = "module"
         fun createRoute(module: ModuleType) = "module/alphabet/${module.name}"
     }
 
-    data object LetterList : Route("module/alphabet/{module}/letters") {
-        const val ARG_MODULE = "module"
-        fun createRoute(module: ModuleType) = "module/alphabet/${module.name}/letters"
-    }
-
-    data object LetterDetail : Route("module/alphabet/{module}/letter/{itemId}") {
-        const val ARG_MODULE = "module"
-        const val ARG_ITEM_ID = "itemId"
-        fun createRoute(module: ModuleType, itemId: String) =
-            "module/alphabet/${module.name}/letter/${encode(itemId)}"
-    }
-
     // --- Maths -----------------------------------------------------------------
+    // A single route: tabs (counting / shapes / addition) are ViewModel state,
+    // not destinations.
     data object MathsModule : Route("module/maths")
-    data object CountingDetail : Route("module/maths/counting/{number}") {
-        const val ARG_NUMBER = "number"
-        fun createRoute(number: Int) = "module/maths/counting/$number"
-    }
-    data object Shapes : Route("module/maths/shapes")
 
     // --- Shared quiz + result --------------------------------------------------
     /**
@@ -79,22 +61,19 @@ sealed class Route(val pattern: String) {
             }
             return "quiz/${module.name}/$encodedIds/$questionCount/$seed"
         }
-    }
 
-    data object Result : Route("result/{module}/{correct}/{total}/{stars}/{coins}") {
-        const val ARG_MODULE = "module"
-        const val ARG_CORRECT = "correct"
-        const val ARG_TOTAL = "total"
-        const val ARG_STARS = "stars"
-        const val ARG_COINS = "coins"
-
-        fun createRoute(
-            module: ModuleType,
-            correct: Int,
-            total: Int,
-            stars: Int,
-            coins: Int,
-        ) = "result/${module.name}/$correct/$total/$stars/$coins"
+        /**
+         * Reverses [createRoute]'s id encoding.
+         *
+         * Each id is decoded individually: Bangla/Arabic ids carry non-ASCII
+         * glyphs (`BANGLA_V_অ`), and comparing the still-encoded form against
+         * catalog ids matches nothing - which used to leave every non-English
+         * single-letter quiz on an eternal loading spinner.
+         */
+        fun parseItemIds(encoded: String?): List<String> {
+            if (encoded.isNullOrBlank() || encoded == NO_ITEMS) return emptyList()
+            return encoded.split(",").map { decode(it) }
+        }
     }
 
     // --- Games -----------------------------------------------------------------
@@ -102,6 +81,7 @@ sealed class Route(val pattern: String) {
     data object MemoryMatch : Route("games/memory")
     data object TapTheAnswer : Route("games/tap")
     data object TimedQuiz : Route("games/timed")
+    data object OddOneOut : Route("games/odd")
 
     // --- Parents ---------------------------------------------------------------
     data object Progress : Route("progress")
@@ -115,22 +95,3 @@ internal fun encode(value: String): String =
 /** Reverses [encode]. */
 internal fun decode(value: String): String =
     runCatching { java.net.URLDecoder.decode(value, Charsets.UTF_8.name()) }.getOrDefault(value)
-
-/**
- * The Home tile for a destination.
- *
- * Keeping the icon next to the route means a module can never be added to Home
- * without also being given an icon and a colour, which is the usual way a kids'
- * app ends up with a grey, unlabelled tile.
- */
-data class HomeTile(
-    val route: String,
-    val labelRes: Int,
-    val icon: ImageVector,
-    val containerColor: Int,
-    val moduleType: ModuleType?,
-)
-
-/** Selected / unselected tab icon pair, for the bottom bar. */
-val FilledTabIcon: ImageVector = Icons.Filled.Circle
-val EmptyTabIcon: ImageVector = Icons.Outlined.Circle

@@ -153,7 +153,7 @@ class QuizFactoryTest {
         assertThat(repository.totalItems(ModuleType.ENGLISH)).isEqualTo(26)
         assertThat(repository.totalItems(ModuleType.BANGLA)).isEqualTo(BanglaCatalog.letters.size)
         assertThat(repository.totalItems(ModuleType.ARABIC)).isEqualTo(ArabicCatalog.letters.size)
-        assertThat(repository.totalItems(ModuleType.MATHS)).isEqualTo(20)
+        assertThat(repository.totalItems(ModuleType.MATHS)).isEqualTo(33)
     }
 
     @Test
@@ -185,6 +185,33 @@ class QuizFactoryTest {
             assertThat(letter.exampleWord).isNotEmpty()
             assertThat(letter.visual).isNotEmpty()
             assertThat(letter.transliteration).isNotEmpty()
+        }
+    }
+
+    @Test
+    fun `every question names the lesson it teaches`() {
+        // The quiz reports exactly the correctly-answered subjects for progress,
+        // so a question whose subject is missing or wrong silently corrupts the
+        // home progress bars.
+        val catalogueIds = (
+            EnglishCatalog.letters + BanglaCatalog.letters + ArabicCatalog.letters +
+                MathsCatalog.counting + MathsCatalog.shapes
+            ).map { it.id }.toSet()
+
+        ModuleType.entries.forEach { module ->
+            repeat(20) { seed ->
+                repository.buildQuiz(module, count = 5, seed = seed.toLong()).forEach { question ->
+                    assertThat(question.subjectItemId).isNotEmpty()
+                    assertThat(catalogueIds).contains(question.subjectItemId)
+                    if (
+                        question.kind == QuizKind.PICTURE_TO_LETTER ||
+                        question.kind == QuizKind.LETTER_TO_PICTURE ||
+                        question.kind == QuizKind.SHAPE_COLOUR
+                    ) {
+                        assertThat(question.correctOption.id).isEqualTo(question.subjectItemId)
+                    }
+                }
+            }
         }
     }
 

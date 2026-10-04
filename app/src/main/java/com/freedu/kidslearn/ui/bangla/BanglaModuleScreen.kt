@@ -29,6 +29,7 @@ fun BanglaModuleScreen(
         onSelectLetter = viewModel::selectLetter,
         onClearSelection = viewModel::clearSelection,
         onPronounce = viewModel::pronounce,
+        onTraceComplete = viewModel::onTraceFinished,
         onTakeQuiz = { item -> onTakeQuiz(ModuleType.BANGLA, item?.id) },
         modifier = modifier,
     )

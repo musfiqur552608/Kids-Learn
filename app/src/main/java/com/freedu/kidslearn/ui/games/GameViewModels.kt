@@ -324,6 +324,12 @@ class FindCorrectViewModel @Inject constructor(
                 correctIndex = options.indexOf(target.letter),
             )
         }
+        // The target is glyph-only on screen; a pre-reader needs to hear it.
+        // Games are English-only, so the English voice is always correct here.
+        feedbackPlayer.pronouncePrompt(
+            target.letter,
+            com.freedu.kidslearn.core.audio.FeedbackPlayer.Locales.ENGLISH,
+        )
     }
 
     private fun finish() {
@@ -342,6 +348,119 @@ class FindCorrectViewModel @Inject constructor(
     }
 
 
+}
+
+// ============================================================================
+// Odd one out
+// ============================================================================
+
+data class OddOneOutUiState(
+    val options: List<String> = emptyList(),
+    val oddIndex: Int = 0,
+    val round: Int = 0,
+    val totalRounds: Int = ROUNDS,
+    val correctAnswers: Int = 0,
+    val mistakes: Int = 0,
+    val result: GameResult? = null,
+    val showCelebration: Boolean = false,
+) {
+    val isComplete: Boolean get() = round >= totalRounds
+}
+
+/**
+ * "Odd one out": four glyphs, three the same and one different.
+ *
+ * The easiest discrimination game in the hub - easier than "find the correct
+ * one", which first requires holding a target in mind. Three identical tiles
+ * make the odd one pop out visually, so even a three-year-old can play the
+ * first rounds by shape alone and grow into naming the letters.
+ */
+@HiltViewModel
+class OddOneOutViewModel @Inject constructor(
+    private val contentRepository: ContentRepository,
+    private val recordGameResult: RecordGameResultUseCase,
+    private val feedbackPlayer: FeedbackPlayer,
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(OddOneOutUiState())
+    val uiState: StateFlow<OddOneOutUiState> = _uiState.asStateFlow()
+
+    init {
+        nextRound()
+    }
+
+    fun onOptionTapped(index: Int) {
+        val state = _uiState.value
+        if (state.isComplete) return
+
+        feedbackPlayer.onTap()
+        if (index == state.oddIndex) {
+            feedbackPlayer.onCorrect()
+            _uiState.update {
+                it.copy(
+                    correctAnswers = it.correctAnswers + 1,
+                    round = it.round + 1,
+                )
+            }
+            if (_uiState.value.isComplete) {
+                finish()
+            } else {
+                nextRoundKeepingScore()
+            }
+        } else {
+            feedbackPlayer.onTryAgain()
+            _uiState.update { it.copy(mistakes = it.mistakes + 1) }
+        }
+    }
+
+    /** Hides the confetti overlay without discarding the finished result. */
+    fun dismissResult() {
+        _uiState.update { it.copy(showCelebration = false) }
+    }
+
+    fun playAgain() {
+        _uiState.value = OddOneOutUiState()
+        nextRound()
+    }
+
+    private fun nextRound() {
+        _uiState.update { it.copy(round = 0, correctAnswers = 0, mistakes = 0) }
+        nextRoundKeepingScore()
+    }
+
+    private fun nextRoundKeepingScore() {
+        val random = Random(System.nanoTime())
+        val pool = contentRepository.letters(ModuleType.ENGLISH)
+        val same = pool[random.nextInt(pool.size)]
+        // A visibly distinct odd one: a different letter *and* a different
+        // shape family where possible, so the round never hinges on two
+        // near-identical glyphs (I/J, O/Q) for a child still learning.
+        val odd = pool.filter { it.letter != same.letter }
+            .shuffled(random)
+            .first()
+        val options = (List(OPTION_COUNT - 1) { same.letter } + odd.letter).shuffled(random)
+        _uiState.update {
+            it.copy(
+                options = options,
+                oddIndex = options.indexOf(odd.letter),
+            )
+        }
+    }
+
+    private fun finish() {
+        viewModelScope.launch {
+            val state = _uiState.value
+            val result = recordGameResult(
+                gameType = GameType.ODD_ONE_OUT,
+                score = state.correctAnswers,
+                totalRounds = state.totalRounds,
+                correctAnswers = state.correctAnswers,
+                today = LocalDate.now(),
+            )
+            _uiState.update { it.copy(result = result, showCelebration = true) }
+            feedbackPlayer.onModuleComplete()
+        }
+    }
 }
 
 // ============================================================================
@@ -409,7 +528,15 @@ class TimedQuizViewModel @Inject constructor(
             questionNumber = 0,
             isRunning = true,
         )
+        speakCurrent()
         startTimer()
+    }
+
+    /** Reads the current question aloud: pre-readers cannot read the prompt. */
+    private fun speakCurrent() {
+        _uiState.value.question?.let { question ->
+            feedbackPlayer.pronouncePrompt(question.speakText, question.speakLocale)
+        }
     }
 
     fun onAnswerSelected(index: Int) {
@@ -423,8 +550,9 @@ class TimedQuizViewModel @Inject constructor(
             feedbackPlayer.onCorrect()
             answeredCorrectly++
             // A correct answer is worth more the faster it came, but never more
-            // than 3 points, so speed can never beat understanding.
-            val speedBonus = (state.secondsLeft / SECONDS_PER_QUESTION).coerceIn(0, 2)
+            // than 3 points, so speed can never beat understanding: an instant
+            // answer earns 1 + 2, a mid-timer answer 1 + 1, a last-second one 1.
+            val speedBonus = (state.secondsLeft * 2 / SECONDS_PER_QUESTION).coerceIn(0, 2)
             _uiState.update { it.copy(score = it.score + 1 + speedBonus) }
         } else {
             feedbackPlayer.onTryAgain()
@@ -442,6 +570,7 @@ class TimedQuizViewModel @Inject constructor(
                     isRunning = true,
                 )
             }
+            speakCurrent()
             startTimer()
         }
     }
@@ -459,9 +588,36 @@ class TimedQuizViewModel @Inject constructor(
                 _uiState.update { it.copy(secondsLeft = remaining) }
             }
             if (isActive && remaining == 0) {
-                _uiState.update { it.copy(isOver = true, isRunning = false) }
-                feedbackPlayer.onTryAgain()
+                onTimeout()
             }
+        }
+    }
+
+    /**
+     * The timer ran out: the question scores zero and the game moves on.
+     *
+     * Previously this set `isOver = true` and stopped, which no screen reads -
+     * the round silently deadlocked on the unanswered question with dead
+     * buttons. A missed question must advance exactly like an answered one,
+     * finishing the round when it was the last question.
+     */
+    private fun onTimeout() {
+        feedbackPlayer.onTryAgain()
+        val state = _uiState.value
+        val nextIndex = state.questionNumber + 1
+        if (nextIndex >= questions.size) {
+            finish()
+        } else {
+            _uiState.update {
+                it.copy(
+                    question = questions[nextIndex],
+                    questionNumber = nextIndex,
+                    secondsLeft = SECONDS_PER_QUESTION,
+                    isRunning = true,
+                )
+            }
+            speakCurrent()
+            startTimer()
         }
     }
 

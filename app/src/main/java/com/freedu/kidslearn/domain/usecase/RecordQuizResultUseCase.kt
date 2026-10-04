@@ -63,7 +63,8 @@ class RecordQuizResultUseCase @Inject constructor(
             starsEarned = stars,
             coinsEarned = coins,
             itemIds = itemIds,
-            isNewPersonalBest = isNewPersonalBest,
+            isNewPersonalBest = stars > 0 && newlyUnlocked.isNotEmpty(),
+            newBadges = newlyUnlocked,
         )
     }
 

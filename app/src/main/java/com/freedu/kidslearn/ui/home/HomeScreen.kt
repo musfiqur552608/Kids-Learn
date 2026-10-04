@@ -14,10 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.MaterialTheme
@@ -46,8 +46,10 @@ import com.freedu.kidslearn.ui.components.Mascot
 import com.freedu.kidslearn.ui.components.MascotMood
 import com.freedu.kidslearn.ui.theme.ModuleTileHeight
 import com.freedu.kidslearn.ui.components.StatPill
+import com.freedu.kidslearn.ui.components.StaggeredEntrance
 import com.freedu.kidslearn.ui.components.attentionPulse
 import com.freedu.kidslearn.ui.components.clickableNoRipple
+import com.freedu.kidslearn.ui.components.pressBounce
 import com.freedu.kidslearn.ui.theme.KidTheme
 
 /**
@@ -155,33 +157,37 @@ fun HomeScreen(
             )
         }
 
-        items(ModuleType.entries, key = { it.name }) { module ->
+        itemsIndexed(ModuleType.entries, key = { _, module -> module.name }) { index, module ->
             val tile = state.tiles.firstOrNull { it.moduleType == module }
-            ModuleTile(
-                moduleType = module,
-                emoji = module.tileEmoji(),
-                completed = tile?.completed ?: 0,
-                total = tile?.total ?: 0,
-                onClick = { onOpenModule(module) },
-            )
+            StaggeredEntrance(index = index) {
+                ModuleTile(
+                    moduleType = module,
+                    emoji = module.tileEmoji(),
+                    completed = tile?.completed ?: 0,
+                    total = tile?.total ?: 0,
+                    onClick = { onOpenModule(module) },
+                )
+            }
         }
 
         item {
-            Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                SquareTile(
-                    emoji = "🎮",
-                    titleRes = R.string.module_games,
-                    accent = KidTheme.colors.games,
-                    onClick = onOpenGames,
-                    modifier = Modifier.weight(1f),
-                )
-                SquareTile(
-                    emoji = "📊",
-                    titleRes = R.string.module_progress,
-                    accent = KidTheme.colors.progress,
-                    onClick = onOpenProgress,
-                    modifier = Modifier.weight(1f),
-                )
+            StaggeredEntrance(index = ModuleType.entries.size) {
+                Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                    SquareTile(
+                        emoji = "🎮",
+                        titleRes = R.string.module_games,
+                        accent = KidTheme.colors.games,
+                        onClick = onOpenGames,
+                        modifier = Modifier.weight(1f),
+                    )
+                    SquareTile(
+                        emoji = "📊",
+                        titleRes = R.string.module_progress,
+                        accent = KidTheme.colors.progress,
+                        onClick = onOpenProgress,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
             }
         }
 
@@ -191,7 +197,7 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.End,
             ) {
                 KidIconButton(
-                    icon = Icons.Filled.LocalFireDepartment,
+                    icon = Icons.Filled.Lock,
                     contentDescription = stringResource(R.string.module_parent_zone),
                     onClick = onOpenParentZone,
                     containerColor = KidTheme.colors.parentZoneContainer,
@@ -240,6 +246,7 @@ private fun ModuleTile(
             .height(ModuleTileHeight)
             .clip(RoundedCornerShape(28.dp))
             .background(accent)
+            .pressBounce(interactionSource)
             .clickableNoRipple(interactionSource, onClick)
             .semantics { contentDescription = description }
             .padding(horizontal = 20.dp),
@@ -281,6 +288,7 @@ private fun SquareTile(
             .height(ModuleTileHeight)
             .clip(RoundedCornerShape(28.dp))
             .background(accent.copy(alpha = 0.16f))
+            .pressBounce(interactionSource)
             .clickableNoRipple(interactionSource, onClick)
             .padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -312,7 +320,11 @@ private fun StreakBanner(streak: Int, celebrate: Boolean) {
         EmojiTile(emoji = "🔥", contentDescription = null, fontSize = 30.sp)
         Spacer(Modifier.width(12.dp))
         Text(
-            text = stringResource(R.string.progress_streak) + ": $streak",
+            text = stringResource(
+                R.string.progress_streak_value,
+                stringResource(R.string.progress_streak),
+                streak,
+            ),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )

@@ -38,10 +38,11 @@ interface SpeechPlayer {
  * bundled sound effect. The child always gets *some* audio feedback rather than
  * silence, and nothing in this app ever touches the network.
  *
- * ## Where real recorded audio should go
- * If the project later ships studio-recorded narration (the better option for
- * teaching correct pronunciation), drop the clips in `res/raw/pronounce/` and
- * replace this class with a `MediaPlayer`-based implementation of [SpeechPlayer].
+ * ## Where real recorded audio lives
+ * Bundled narration clips (`assets/narration/`, see
+ * `tools/generate_narration.py`) play through [BundledSpeechPlayer], which
+ * delegates here only for lines with no bundled clip. To replace the synthetic
+ * voices with studio recordings, regenerate the assets - no code changes needed.
  * No other class changes: everything above this line depends on the interface.
  *
  * ## Lifecycle
@@ -99,9 +100,31 @@ class AndroidSpeechPlayer @Inject constructor(
                 Log.w(TAG, "Utterance $utteranceId failed")
             }
         })
-        // Network voices would need a data connection this app does not have; asking
-        // for the embedded voice makes the intent explicit and keeps latency low.
-        engine.voice = engine.voices?.firstOrNull { !it.isNetworkConnectionRequired }
+        // NOTE: no global `engine.voice` is set here on purpose. Pinning one voice
+        // (almost always English, as the first embedded voice) and then calling
+        // `setLanguage(bn-BD)` per utterance leaves the English voice in place on
+        // several engines - Samsung's included - so Bangla/Arabic text is read
+        // with English pronunciation. Voices are resolved per language in
+        // [embeddedVoice] instead.
+    }
+
+    /**
+     * Embedded (offline) voices, resolved per language and cached.
+     *
+     * Exact locale first (`bn-BD`), then language-only (`bn`), so a regional pin
+     * never fails just because the device ships a different region's voice. A
+     * cached null means "no offline voice": the caller falls back to a sound
+     * rather than letting the engine pick a network voice that can never load.
+     */
+    private val voiceForTag = ConcurrentHashMap<String, android.speech.tts.Voice?>()
+
+    private fun embeddedVoice(locale: Locale, tag: String): android.speech.tts.Voice? {
+        if (voiceForTag.containsKey(tag)) return voiceForTag[tag]
+        val voices = tts?.voices.orEmpty().filter { !it.isNetworkConnectionRequired }
+        val match = voices.firstOrNull { it.locale == locale }
+            ?: voices.firstOrNull { it.locale.language == locale.language }
+        voiceForTag[tag] = match
+        return match
     }
 
     init {
@@ -127,35 +150,80 @@ class AndroidSpeechPlayer @Inject constructor(
             return
         }
 
-        val locale = Locale.forLanguageTag(localeTag)
-        val availability = when (engine.isLanguageAvailable(locale)) {
-            TextToSpeech.LANG_AVAILABLE -> TextToSpeech.LANG_AVAILABLE
-            TextToSpeech.LANG_COUNTRY_AVAILABLE -> TextToSpeech.LANG_COUNTRY_AVAILABLE
-            else -> TextToSpeech.LANG_NOT_SUPPORTED
-        }
-        if (availability == TextToSpeech.LANG_NOT_SUPPORTED) {
-            Log.i(TAG, "No offline voice for $localeTag; using sound fallback")
-            unsupportedLocales += localeTag
-            playFallback()
-            return
-        }
+        val queueMode = if (flush) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
 
-        runCatching {
-            val queueMode = if (flush) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
+        // Candidate locales: exact tag first (bn-BD), then language-only (bn).
+        // Many devices ship a different region's voice (bn-IN instead of bn-BD,
+        // ar-EG instead of ar-SA) or report the exact tag as missing while the
+        // bare language works. Trying language-only before the chime fallback is
+        // what turns "common ding for every Bangla/Arabic lesson" into speech.
+        val exact = Locale.forLanguageTag(localeTag)
+        val candidates = buildList {
+            add(exact)
+            if (exact.country.isNotEmpty()) add(Locale(exact.language))
+        }
+        for (candidate in candidates) {
+            if (trySpeak(engine, text, candidate, queueMode)) return
+        }
+        Log.i(TAG, "No offline voice for $localeTag; using sound fallback")
+        unsupportedLocales += localeTag
+        playFallback()
+    }
 
-            // The per-utterance `TextToSpeech.Params` API (API 33+) is not present in
-            // the public SDK stubs this project compiles against, so the engine's
-            // language and rate are set immediately before each `speak` instead.
-            // That is a global mutation, which is safe here because `speak` is
-            // synchronous and the queue mode is `QUEUE_FLUSH`: the settings are
-            // consumed by this call and never observed by another.
-            @Suppress("DEPRECATION")
-            run {
-                engine.setLanguage(locale)
-                engine.setSpeechRate(SLOW_SPEECH_RATE)
-                engine.speak(text, queueMode, null, "$text-$localeTag")
+    /**
+     * Attempts one utterance with a single [locale].
+     *
+     * Returns true when the engine accepted and queued the speech. Any failure
+     * (language unavailable, voice rejected, speak error) returns false so the
+     * caller can try the next candidate locale before falling back to the chime.
+     */
+    @Suppress("DEPRECATION")
+    private fun trySpeak(
+        engine: TextToSpeech,
+        text: String,
+        locale: Locale,
+        queueMode: Int,
+    ): Boolean {
+        return runCatching {
+            val availability = engine.isLanguageAvailable(locale)
+            // LANG_COUNTRY_VAR_AVAILABLE (e.g. bn-BD satisfied by a bn-IN voice)
+            // is speakable; only MISSING_DATA / NOT_SUPPORTED are not.
+            if (availability != TextToSpeech.LANG_AVAILABLE &&
+                availability != TextToSpeech.LANG_COUNTRY_AVAILABLE &&
+                availability != TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE
+            ) {
+                return false
             }
-        }.onFailure { playFallback() }
+            // The per-utterance `TextToSpeech.Params` API (API 33+) is not present
+            // in the public SDK stubs this project compiles against, so the
+            // engine's language and rate are set immediately before each `speak`
+            // instead. That is a global mutation, which is safe here because
+            // `speak` is synchronous and the queue mode is `QUEUE_FLUSH`: the
+            // settings are consumed by this call and never observed by another.
+            // Prefer the language's own embedded voice over `setLanguage` alone:
+            // on several engines (Samsung's included) a previously set voice
+            // sticks and the language switch is ignored, so Bangla text was read
+            // with English pronunciation. `setLanguage` remains as the fallback
+            // for engines that do not report their voices.
+            val voices = tts?.voices.orEmpty().filter { !it.isNetworkConnectionRequired }
+            val voice = voices.firstOrNull { it.locale == locale }
+                ?: voices.firstOrNull { it.locale.language == locale.language }
+            val setResult = if (voice != null) {
+                engine.setVoice(voice)
+            } else {
+                engine.setLanguage(locale)
+            }
+            // setVoice returns SUCCESS/ERROR; setLanguage returns a LANG_* code.
+            // ERROR (-1) and LANG_NOT_SUPPORTED both mean "did not take".
+            if (setResult == TextToSpeech.ERROR ||
+                setResult == TextToSpeech.LANG_NOT_SUPPORTED
+            ) {
+                return false
+            }
+            engine.setSpeechRate(SLOW_SPEECH_RATE)
+            engine.speak(text, queueMode, null, "$text-${locale.toLanguageTag()}") ==
+                TextToSpeech.SUCCESS
+        }.getOrDefault(false)
     }
 
     private fun drainPending() {

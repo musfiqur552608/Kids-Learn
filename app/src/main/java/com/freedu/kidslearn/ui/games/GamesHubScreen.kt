@@ -12,12 +12,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,11 +41,13 @@ import com.freedu.kidslearn.ui.components.EmojiTile
 import com.freedu.kidslearn.ui.components.KidTopBar
 import com.freedu.kidslearn.ui.components.Mascot
 import com.freedu.kidslearn.ui.components.MascotMood
+import com.freedu.kidslearn.ui.components.StaggeredEntrance
 import com.freedu.kidslearn.ui.components.clickableNoRipple
+import com.freedu.kidslearn.ui.components.pressBounce
 import com.freedu.kidslearn.ui.theme.ModuleTileHeight
 import com.freedu.kidslearn.ui.theme.KidTheme
 
-/** The Games hub: three games, each with the child's personal best. */
+/** The Games hub: four games, each with the child's personal best. */
 @Composable
 fun GamesHubScreen(
     state: GamesHubUiState,
@@ -81,12 +84,14 @@ fun GamesHubScreen(
                 }
             }
 
-            items(state.games, key = { it.gameType.name }) { card ->
-                GameCard(
-                    card = card,
-                    accent = accent,
-                    onClick = { onOpenGame(card.gameType) },
-                )
+            itemsIndexed(state.games, key = { _, card -> card.gameType.name }) { index, card ->
+                StaggeredEntrance(index = index) {
+                    GameCard(
+                        card = card,
+                        accent = accent,
+                        onClick = { onOpenGame(card.gameType) },
+                    )
+                }
             }
         }
     }
@@ -111,6 +116,7 @@ private fun GameCard(
             .height(ModuleTileHeight)
             .clip(RoundedCornerShape(28.dp))
             .background(accent)
+            .pressBounce(interactionSource)
             .clickableNoRipple(interactionSource, onClick)
             .semantics { contentDescription = description }
             .padding(horizontal = 20.dp),
@@ -152,4 +158,5 @@ private fun iconFor(gameType: GameType): ImageVector = when (gameType) {
     GameType.MEMORY_MATCH -> Icons.Filled.GridView
     GameType.FIND_THE_CORRECT_ONE -> Icons.Filled.EmojiEvents
     GameType.TIMED_QUIZ -> Icons.Filled.Timer
+    GameType.ODD_ONE_OUT -> Icons.Filled.Visibility
 }

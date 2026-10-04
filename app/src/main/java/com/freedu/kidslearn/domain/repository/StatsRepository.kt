@@ -6,6 +6,7 @@ import com.freedu.kidslearn.domain.model.DashboardSnapshot
 import com.freedu.kidslearn.domain.model.ModuleProgress
 import com.freedu.kidslearn.domain.model.ModuleType
 import com.freedu.kidslearn.domain.model.UserStats
+import com.freedu.kidslearn.domain.model.WeeklyActivity
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -28,6 +29,9 @@ interface StatsRepository {
 
     /** Everything the progress dashboard and parent zone render, in one emission. */
     fun observeDashboard(): Flow<DashboardSnapshot>
+
+    /** Lessons touched + games played per day for the 7 days ending [today]. */
+    fun observeWeeklyActivity(today: java.time.LocalDate): Flow<WeeklyActivity>
 
     /**
      * Records that the app was opened today and updates the daily streak.

@@ -65,6 +65,7 @@ fun MathsScreen(
     onClearSelection: () -> Unit,
     onTakeQuiz: (MathsTab) -> Unit,
     onPronounce: (com.freedu.kidslearn.domain.model.CountingItem) -> Unit,
+    onPronounceShape: (com.freedu.kidslearn.domain.model.ShapeItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val accent = KidTheme.colors.maths
@@ -103,7 +104,9 @@ fun MathsScreen(
                 state = state,
                 accent = accent,
                 onSelect = onSelectNumber,
+                onClearSelection = onClearSelection,
                 onTakeQuiz = { onTakeQuiz(MathsTab.COUNTING) },
+                onPronounce = onPronounce,
                 modifier = Modifier.weight(1f),
             )
 
@@ -111,6 +114,7 @@ fun MathsScreen(
                 shapes = state.shapes.map { it.id to it },
                 accent = accent,
                 onTakeQuiz = { onTakeQuiz(MathsTab.SHAPES) },
+                onPronounceShape = onPronounceShape,
                 modifier = Modifier.weight(1f),
             )
 
@@ -135,7 +139,9 @@ private fun CountingTab(
     state: MathsUiState,
     accent: Color,
     onSelect: (Int) -> Unit,
+    onClearSelection: () -> Unit,
     onTakeQuiz: () -> Unit,
+    onPronounce: (com.freedu.kidslearn.domain.model.CountingItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val selected = state.selected
@@ -145,8 +151,11 @@ private fun CountingTab(
             card = state.countingCards.firstOrNull { it.item.number == selected.number },
             item = selected,
             accent = accent,
-            onBack = { onSelect(selected.number) },
+            // Back must *clear* the selection: re-selecting the same number would
+            // leave the child stuck on this screen with a dead back button.
+            onBack = onClearSelection,
             onTakeQuiz = onTakeQuiz,
+            onPronounce = { onPronounce(selected) },
             modifier = modifier,
         )
         return
@@ -184,6 +193,7 @@ private fun CountingDetail(
     accent: Color,
     onBack: () -> Unit,
     onTakeQuiz: () -> Unit,
+    onPronounce: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -242,6 +252,14 @@ private fun CountingDetail(
             StarRow(stars = card.stars, starSize = 28.dp)
         }
 
+        KidButton(
+            text = stringResource(R.string.listen),
+            onClick = onPronounce,
+            color = accent,
+            contentColor = Color.White,
+            modifier = Modifier.fillMaxWidth(0.7f),
+        )
+
         Spacer(Modifier.weight(1f))
 
         KidButton(
@@ -289,12 +307,13 @@ private fun NumberCard(
     }
 }
 
-/** Shapes and colours. */
+/** Shapes and colours. Tapping a card speaks its name. */
 @Composable
 private fun ShapesTab(
     shapes: List<Pair<String, com.freedu.kidslearn.domain.model.ShapeItem>>,
     accent: Color,
     onTakeQuiz: () -> Unit,
+    onPronounceShape: (com.freedu.kidslearn.domain.model.ShapeItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
@@ -305,11 +324,15 @@ private fun ShapesTab(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         items(shapes, key = { it.first }) { (_, item) ->
+            val interactionSource = androidx.compose.runtime.remember {
+                androidx.compose.foundation.interaction.MutableInteractionSource()
+            }
             Column(
                 modifier = Modifier
                     .heightIn(min = 104.dp)
                     .clip(RoundedCornerShape(22.dp))
                     .background(MaterialTheme.colorScheme.surface)
+                    .clickableNoRipple(interactionSource, onClick = { onPronounceShape(item) })
                     .semantics { contentDescription = item.shapeName }
                     .padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,

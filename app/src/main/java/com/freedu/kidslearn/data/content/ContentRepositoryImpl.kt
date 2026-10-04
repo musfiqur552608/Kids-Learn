@@ -74,7 +74,10 @@ class ContentRepositoryImpl @Inject constructor(
         ModuleType.ENGLISH -> EnglishCatalog.letters.size
         ModuleType.BANGLA -> BanglaCatalog.letters.size
         ModuleType.ARABIC -> ArabicCatalog.letters.size
-        ModuleType.MATHS -> MathsCatalog.counting.size
+        // Counting *and* shapes: both are completable lessons, so both count.
+        // Counting only the 20 numbers while shape completions increment the
+        // numerator lets the bar read "25 of 20".
+        ModuleType.MATHS -> MathsCatalog.counting.size + MathsCatalog.shapes.size
     }
 
     override fun buildQuiz(

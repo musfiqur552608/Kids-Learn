@@ -1,7 +1,7 @@
 # Kids Learn
 
 A fully offline learning app for young children: English, Bangla and Arabic
-alphabets, numbers and shapes, plus three mini-games, with progress, stars,
+alphabets, numbers and shapes, plus four mini-games, with progress, stars,
 badges and a maths-gated parent zone. Kotlin, Jetpack Compose, Room, Hilt.
 
 The app never touches the network — there is no `INTERNET` permission in either
@@ -157,7 +157,28 @@ opaque:
 ```sh
 python3 tools/generate_sfx.py     # 8 WAVs -> res/raw (tap, correct, star, ...)
 python3 tools/generate_lottie.py  # confetti.json -> res/raw
+python3 tools/generate_narration.py          # 243 MP3s + manifest -> assets/narration
+python3 tools/generate_narration.py --check  # offline verify (for CI)
 ```
+
+### Bundled narration (built-in voice)
+
+Every Listen line plays a pre-generated clip from `assets/narration/`
+(`BundledSpeechPlayer`), so Bangla/Arabic speak correctly on any device with
+no download, no permission and no network. The clips are the *installed* app:
+nothing is fetched at runtime and the APK stays fully offline (still no
+`INTERNET` permission) — only the generator script itself needs network, on
+the developer's machine.
+
+* Coverage: 26 English + 46 Bangla + 28 Arabic lesson lines and their
+  word-only quiz prompts, 20 numbers, 13 shapes, "How many?", 10 mascot
+  encouragements. Dynamic English-only prompts ("3 plus 2", badge names) use
+  system TTS, which is always present for en-US.
+* After any catalog or encouragement-copy edit, re-run the generator and commit
+  the changed clips: `BundledNarrationTest` (unit) and `--check` fail until
+  the manifest matches the code again.
+* To replace the synthetic voices with studio recordings, drop same-named files
+  into `assets/narration/` — no code changes needed.
 
 ## Alternate app names
 

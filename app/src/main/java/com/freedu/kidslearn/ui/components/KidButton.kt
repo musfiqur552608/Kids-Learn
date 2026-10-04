@@ -1,9 +1,12 @@
 package com.freedu.kidslearn.ui.components
 
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -66,7 +69,16 @@ fun KidButton(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
-    val scale = if (isPressed && enabled) PRESSED_SCALE else 1f
+    // Animated rather than snapped: the spring-back is the playful part, and a
+    // hard 0.94 jump reads as a glitch on a big colourful button.
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed && enabled) PRESSED_SCALE else 1f,
+        animationSpec = spring(
+            stiffness = Spring.StiffnessMediumLow,
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+        ),
+        label = "kidbutton-press",
+    )
 
     Button(
         onClick = onClick,
@@ -118,7 +130,14 @@ fun KidIconButton(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
-    val scale = if (isPressed) PRESSED_SCALE else 1f
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) PRESSED_SCALE else 1f,
+        animationSpec = spring(
+            stiffness = Spring.StiffnessMediumLow,
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+        ),
+        label = "kidiconbutton-press",
+    )
 
     Box(
         modifier = modifier

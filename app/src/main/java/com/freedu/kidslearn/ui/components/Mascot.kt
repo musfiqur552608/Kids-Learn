@@ -103,11 +103,14 @@ fun Mascot(
         label = "mascot-wave",
     )
 
+    // Announced without the mood: "mascot, encourage" is developer vocabulary,
+    // not something a TalkBack user can act on, and the mood name is English-only.
+    val mascotDescription = androidx.compose.ui.res.stringResource(R.string.cd_mascot)
     Box(
         modifier = modifier
             .size(size)
             .scale(1f + bob * 0.03f)
-            .semantics { contentDescription = "Mascot, ${mood.name.lowercase()}" },
+            .semantics { contentDescription = mascotDescription },
         contentAlignment = Alignment.Center,
     ) {
         Canvas(modifier = Modifier.size(size)) {
@@ -342,7 +345,7 @@ fun CelebrationOverlay(
                         .padding(horizontal = 20.dp, vertical = 10.dp),
                 )
                 KidButton(
-                    text = "Yay!",
+                    text = androidx.compose.ui.res.stringResource(R.string.yay),
                     onClick = onFinished,
                     color = MaterialTheme.colorScheme.surface,
                     contentColor = MaterialTheme.colorScheme.primary,

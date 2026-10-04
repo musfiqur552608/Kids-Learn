@@ -13,9 +13,16 @@ import com.freedu.kidslearn.domain.model.ModuleType
  * because a 3-8 year old cannot yet be expected to read them standalone.
  *
  * ## Example words
- * Placeholder set chosen from the words a Bangla-medium preschool primer
- * introduces first. `exampleMeaning` carries a second rendering so the card is
- * still useful when the app UI is toggled to English.
+ * Curated from the words a Bangla-medium preschool primer introduces first -
+ * every word must genuinely start with (or, for ঙ ঞ ণ য় ঢ় which never start a
+ * word, genuinely contain) its letter, and the emoji must depict the word's
+ * *meaning*, not just its first letter. `exampleMeaning` carries a second
+ * rendering so the card is still useful when the app UI is toggled to English.
+ *
+ * ## Transliteration
+ * Retroflexes take dotted letters (ṭ ḍ ṇ ṣ) so ট/ত, ঠ/থ, ড/দ, ঢ/ধ, ণ/ন and
+ * ষ/শ/স stay distinct without digit hacks. The same dotted convention is used
+ * by Bengali grammars, so a parent sounding the card out reads it correctly.
  *
  * Rendering requires the bundled Noto Sans Bengali font (see `ui/theme/Type.kt`);
  * the platform default font has no Bangla coverage.
@@ -23,55 +30,55 @@ import com.freedu.kidslearn.domain.model.ModuleType
 internal object BanglaCatalog {
 
     val vowels: List<LetterItem> = listOf(
-        vowel("অ", "ô", "আম", "Mango", "🍎"),
+        vowel("অ", "ô", "অজগর", "Python", "🐍"),
         vowel("আ", "ā", "আঙুল", "Finger", "👆"),
-        vowel("ই", "i", "ইলু", "Watermelon", "🍉"),
-        vowel("ঈ", "ī", "ঈগা", "Fly", "🪰"),
-        vowel("উ", "u", "উচু", "High", "⬆️"),
-        vowel("ঊ", "ū", "ঊঁটা", "Tadpole", "🐸"),
-        vowel("ঋ", "ri", "ঋতু", "Season", "🍂"),
+        vowel("ই", "i", "ইঁদুর", "Rat", "🐀"),
+        vowel("ঈ", "ī", "ঈগল", "Eagle", "🦅"),
+        vowel("উ", "u", "উট", "Camel", "🐫"),
+        vowel("ঊ", "ū", "ঊষা", "Dawn", "🌅"),
+        vowel("ঋ", "ri", "ঋষি", "Sage", "🧙"),
         vowel("এ", "e", "এক", "One", "1️⃣"),
-        vowel("ঐ", "oi", "ঐকী", "Together", "🤝"),
-        vowel("ও", "o", "ওলা", "Pot", "🏺"),
+        vowel("ঐ", "oi", "ঐক্য", "Unity", "🤝"),
+        vowel("ও", "o", "ওড়না", "Scarf", "🧣"),
         vowel("ঔ", "ou", "ঔষধ", "Medicine", "💊"),
     )
 
     val consonants: List<LetterItem> = listOf(
         consonant("ক", "ko", "কমলা", "Orange", "🍊"),
-        consonant("খ", "kho", "খেলা", "Ball", "⚽"),
+        consonant("খ", "kho", "খরগোশ", "Rabbit", "🐰"),
         consonant("গ", "go", "গাছ", "Tree", "🌳"),
         consonant("ঘ", "gho", "ঘড়ি", "Clock", "⏰"),
         consonant("ঙ", "ng", "রঙ", "Colour", "🎨"),
         consonant("চ", "cho", "চাবি", "Key", "🔑"),
         consonant("ছ", "chho", "ছাতা", "Umbrella", "☂️"),
-        consonant("জ", "jo", "জাম", "Jam", "🍯"),
-        consonant("ঝ", "jho", "ঝাল", "Curry", "🍛"),
-        consonant("ঞ", "nyo", "অঞ্জন", "Flame", "🔥"),
-        consonant("ট", "tto", "টমেটো", "Tomato", "🍅"),
-        consonant("ঠ", "tho", "ঠেলা", "Cart", "🛒"),
-        consonant("ড", "ddo", "ডাব", "Coconut", "🥥"),
-        consonant("ঢ", "ddho", "ঢাকা", "Dhaka", "🏙️"),
-        consonant("ণ", "nno", "কণ্ঠ", "Voice", "🎤"),
+        consonant("জ", "jo", "জাহাজ", "Ship", "🚢"),
+        consonant("ঝ", "jho", "ঝুড়ি", "Basket", "🧺"),
+        consonant("ঞ", "nyo", "অঞ্জলি", "Offering", "👐"),
+        consonant("ট", "ṭo", "টমেটো", "Tomato", "🍅"),
+        consonant("ঠ", "ṭho", "ঠোঁট", "Lip", "👄"),
+        consonant("ড", "ḍo", "ডাব", "Coconut", "🥥"),
+        consonant("ঢ", "ḍho", "ঢাকা", "Dhaka", "🏙️"),
+        consonant("ণ", "ṇo", "কণ্ঠ", "Voice", "🎤"),
         consonant("ত", "to", "তাল", "Palm", "🌴"),
-        consonant("থ", "tho2", "থালা", "Plate", "🍽️"),
+        consonant("থ", "tho", "থালা", "Plate", "🍽️"),
         consonant("দ", "do", "দোকান", "Shop", "🏪"),
         consonant("ধ", "dho", "ধনুক", "Bow", "🏹"),
         consonant("ন", "no", "নৌকা", "Boat", "⛵"),
         consonant("প", "po", "পাখি", "Bird", "🐦"),
         consonant("ফ", "pho", "ফুল", "Flower", "🌸"),
         consonant("ব", "bo", "বই", "Book", "📕"),
-        consonant("ভ", "bho", "ভাতা", "Rice", "🍚"),
+        consonant("ভ", "bho", "ভাত", "Rice", "🍚"),
         consonant("ম", "mo", "মিষ্টি", "Sweets", "🍬"),
-        consonant("য", "jo2", "জয়ন্ত", "Celebration", "🎉"),
+        consonant("য", "ja", "যান", "Vehicle", "🚗"),
         consonant("র", "ro", "রবি", "Sun", "☀️"),
-        consonant("ল", "lo", "লাল", "Red", "❤️"),
+        consonant("ল", "lo", "লাল", "Red", "🔴"),
         consonant("শ", "sho", "শিশু", "Child", "👶"),
-        consonant("ষ", "kho2", "ষড়", "Six", "6️⃣"),
+        consonant("ষ", "ṣo", "ষাঁড়", "Bull", "🐂"),
         consonant("স", "so", "সমুদ্র", "Sea", "🌊"),
         consonant("হ", "ho", "হাত", "Hand", "✋"),
-        consonant("ড়", "rro", "পাড়া", "Riverbank", "🌾"),
-        consonant("ঢ়", "rrho", "ঢেঁড়া", "Owl", "🦉"),
-        consonant("য়", "yo", "রায়", "King", "👑"),
+        consonant("ড়", "rro", "বাড়ি", "House", "🏠"),
+        consonant("ঢ়", "rrho", "আষাঢ়", "Monsoon", "🌧️"),
+        consonant("য়", "yo", "ময়ূর", "Peacock", "🦚"),
     )
 
     /** Teaching order: every vowel, then every consonant. */

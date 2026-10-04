@@ -36,7 +36,7 @@
       Alphabet screens
     -->
     <string name="alphabet_vowels">Vowels</string>
-    <string name="alphabet_consonants">Consons</string>
+    <string name="alphabet_consonants">Consonants</string>
     <string name="listen">Listen</string>
     <string name="trace_instruction">Trace the letter with your finger</string>
     <string name="take_quiz">Play the quiz</string>
@@ -75,6 +75,7 @@
         <item quantity="other">You earned %1$d stars</item>
     </plurals>
     <string name="result_new_badge">New best!</string>
+    <string name="result_new_badge_earned">New badge!</string>
     <string name="result_play_again">Play again</string>
     <string name="result_go_home">Home</string>
 
@@ -98,10 +99,13 @@
     <string name="game_find_correct_subtitle">Tap the right one</string>
     <string name="game_timed_quiz">Quick quiz</string>
     <string name="game_timed_quiz_subtitle">Beat the clock</string>
+    <string name="game_odd_one_out">Odd one out</string>
+    <string name="game_odd_one_out_subtitle">Tap the different one</string>
     <plurals name="game_taps_to_match">
-        <item quantity="one">%1$d tap to match them all</item>
-        <item quantity="other">%1$d taps to match them all</item>
+        <item quantity="one">%1$d tap</item>
+        <item quantity="other">%1$d taps</item>
     </plurals>
+    <string name="game_pairs">Pairs</string>
     <plurals name="game_rounds">
         <item quantity="one">Round %1$d of %2$d</item>
         <item quantity="other">Round %1$d of %2$d</item>
@@ -125,6 +129,7 @@
     <string name="progress_total_stars">Stars</string>
     <string name="progress_total_coins">Coins</string>
     <string name="progress_streak">Day streak</string>
+    <string name="progress_streak_value">%1$s: %2$d</string>
     <string name="progress_best_streak">Best streak</string>
     <string name="progress_lessons">Lessons</string>
     <string name="progress_games">Games</string>
@@ -168,7 +173,6 @@
     <string name="parent_gate_enter">Enter</string>
     <string name="parent_zone_child_name">Child name</string>
     <string name="parent_zone_sound">Sound effects</string>
-    <string name="parent_zone_music">Background music</string>
     <string name="parent_zone_language">App language</string>
     <string name="parent_zone_theme">Theme</string>
     <string name="parent_zone_theme_light">Light</string>
@@ -176,6 +180,9 @@
     <string name="language_english">English</string>
     <string name="language_bangla">Bangla</string>
     <string name="parent_zone_gate_toggle">Ask a maths question</string>
+    <string name="parent_zone_weekly_title">This week</string>
+    <string name="parent_zone_weekly_empty">No activity yet — play a quiz or a game!</string>
+    <string name="parent_zone_module_stars">★ %1$d / %2$d</string>
     <string name="parent_zone_reset">Reset all progress</string>
     <string name="parent_zone_reset_confirm">All stars, coins and badges will be cleared. This cannot be undone.</string>
     <string name="parent_zone_reset_done">Progress reset</string>
@@ -198,6 +205,7 @@
       describe a purely visual element.
     -->
     <string name="cd_coin">Coin</string>
+    <string name="cd_mascot">Mascot</string>
     <plurals name="cd_module_progress">
         <item quantity="one">%1$s: %2$d of %3$d complete</item>
         <item quantity="other">%1$s: %2$d of %3$d complete</item>

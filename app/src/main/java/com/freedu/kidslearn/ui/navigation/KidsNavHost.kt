@@ -24,6 +24,8 @@ import com.freedu.kidslearn.ui.games.GamesHubScreen
 import com.freedu.kidslearn.ui.games.GamesHubViewModel
 import com.freedu.kidslearn.ui.games.MemoryMatchScreen
 import com.freedu.kidslearn.ui.games.MemoryMatchViewModel
+import com.freedu.kidslearn.ui.games.OddOneOutScreen
+import com.freedu.kidslearn.ui.games.OddOneOutViewModel
 import com.freedu.kidslearn.ui.games.TimedQuizScreen
 import com.freedu.kidslearn.ui.games.TimedQuizViewModel
 import com.freedu.kidslearn.ui.home.HomeScreen
@@ -81,10 +83,10 @@ fun KidsNavHost(
             val state by viewModel.uiState.collectAsStateWithLifecycle()
             HomeScreen(
                 state = state,
-                onOpenModule = { module -> navController.navigate(routeForModule(module)) },
-                onOpenGames = { navController.navigate(Route.GamesHub.pattern) },
-                onOpenProgress = { navController.navigate(Route.Progress.pattern) },
-                onOpenParentZone = { navController.navigate(Route.ParentZone.pattern) },
+                onOpenModule = { module -> navController.navigateSingleTop(routeForModule(module)) },
+                onOpenGames = { navController.navigateSingleTop(Route.GamesHub.pattern) },
+                onOpenProgress = { navController.navigateSingleTop(Route.Progress.pattern) },
+                onOpenParentZone = { navController.navigateSingleTop(Route.ParentZone.pattern) },
             )
         }
 
@@ -129,8 +131,16 @@ fun KidsNavHost(
                 onSelectTab = viewModel::selectTab,
                 onSelectNumber = viewModel::selectNumber,
                 onClearSelection = viewModel::clearSelection,
-                onTakeQuiz = { _ -> navController.navigate(Route.Quiz.createRoute(ModuleType.MATHS)) },
+                onTakeQuiz = { _ ->
+                    navController.navigate(
+                        Route.Quiz.createRoute(
+                            ModuleType.MATHS,
+                            seed = System.currentTimeMillis(),
+                        ),
+                    )
+                },
                 onPronounce = viewModel::pronounceCount,
+                onPronounceShape = viewModel::pronounceShape,
             )
         }
 
@@ -191,11 +201,12 @@ fun KidsNavHost(
                 state = state,
                 onBack = { navController.popBackStack() },
                 onOpenGame = { gameType ->
-                    navController.navigate(
+                    navController.navigateSingleTop(
                         when (gameType) {
                             com.freedu.kidslearn.domain.model.GameType.MEMORY_MATCH -> Route.MemoryMatch.pattern
                             com.freedu.kidslearn.domain.model.GameType.FIND_THE_CORRECT_ONE -> Route.TapTheAnswer.pattern
                             com.freedu.kidslearn.domain.model.GameType.TIMED_QUIZ -> Route.TimedQuiz.pattern
+                            com.freedu.kidslearn.domain.model.GameType.ODD_ONE_OUT -> Route.OddOneOut.pattern
                         },
                     )
                 },
@@ -232,6 +243,31 @@ fun KidsNavHost(
             val state by viewModel.uiState.collectAsStateWithLifecycle()
             Box(Modifier.fillMaxSize()) {
                 FindCorrectScreen(
+                    state = state,
+                    onBack = { navController.popBackStack() },
+                    onOptionTapped = viewModel::onOptionTapped,
+                )
+                state.result?.let { result ->
+                    com.freedu.kidslearn.ui.quiz.GameResultScreen(
+                        result = result,
+                        showCelebration = state.showCelebration,
+                        onPlayAgain = viewModel::playAgain,
+                        onGoHome = {
+                            navController.navigate(Route.Home.pattern) {
+                                popUpTo(Route.Home.pattern) { inclusive = true }
+                            }
+                        },
+                        onDismissCelebration = viewModel::dismissResult,
+                    )
+                }
+            }
+        }
+
+        composable(Route.OddOneOut.pattern) {
+            val viewModel: OddOneOutViewModel = hiltViewModel()
+            val state by viewModel.uiState.collectAsStateWithLifecycle()
+            Box(Modifier.fillMaxSize()) {
+                OddOneOutScreen(
                     state = state,
                     onBack = { navController.popBackStack() },
                     onOptionTapped = viewModel::onOptionTapped,
@@ -299,7 +335,6 @@ fun KidsNavHost(
                 onAnswerChanged = viewModel::onAnswerChanged,
                 onSubmitAnswer = viewModel::submitGateAnswer,
                 onSetSound = viewModel::setSoundEnabled,
-                onSetMusic = viewModel::setMusicEnabled,
                 onSetLanguage = viewModel::setLanguage,
                 onSetTheme = viewModel::setThemeMode,
                 onSetChildName = viewModel::setChildName,
@@ -320,11 +355,25 @@ private fun routeForModule(module: ModuleType): String = when (module) {
     ModuleType.MATHS -> Route.MathsModule.pattern
 }
 
+/**
+ * Navigates without stacking duplicates: the destinations this covers have
+ * stable route strings, so a second tap while the first navigation is still
+ * settling lands on the screen that is already there instead of pushing a twin.
+ * (Quiz routes carry a fresh seed every time and are therefore never twins.)
+ */
+private fun androidx.navigation.NavHostController.navigateSingleTop(route: String) {
+    navigate(route) { launchSingleTop = true }
+}
+
 private fun quizRoute(module: ModuleType, itemId: String?): String =
     Route.Quiz.createRoute(
         module = module,
         itemIds = listOfNotNull(itemId),
         questionCount = if (itemId == null) 5 else 3,
+        // A fresh seed per launch: without it every quiz would be the identical
+        // paper (QuizFactory is deterministic), and "play again" would just
+        // repeat the questions the child has already seen.
+        seed = System.currentTimeMillis(),
     )
 
 private fun String?.toModuleType(): ModuleType =

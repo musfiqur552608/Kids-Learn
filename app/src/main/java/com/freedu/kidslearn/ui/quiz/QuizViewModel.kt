@@ -100,10 +100,10 @@ class QuizViewModel @Inject constructor(
         ?.let { name -> ModuleType.entries.firstOrNull { it.name == name } }
         ?: ModuleType.ENGLISH
 
-    private val itemIds: List<String> = savedStateHandle.get<String>(ARG_ITEM_IDS)
-        ?.takeIf { it.isNotBlank() && it != NO_ITEMS }
-        ?.split(",")
-        .orEmpty()
+    private val itemIds: List<String> =
+        com.freedu.kidslearn.ui.navigation.Route.Quiz.parseItemIds(
+            savedStateHandle.get<String>(ARG_ITEM_IDS),
+        )
 
     private val questionCount: Int = savedStateHandle.get<String>(ARG_QUESTION_COUNT)
         ?.toIntOrNull()
@@ -111,6 +111,17 @@ class QuizViewModel @Inject constructor(
         ?: DEFAULT_QUESTION_COUNT
 
     private val seed: Long = savedStateHandle.get<String>(ARG_SEED)?.toLongOrNull() ?: 0L
+
+    /**
+     * Subjects the child has answered correctly at least once this run.
+     *
+     * Passing exactly these - rather than the route's item filter - to the
+     * recorder is what makes "X of 26 learned" move after a mixed quiz covering
+     * several letters, and what stops a quiz where everything was missed from
+     * marking anything learned. A question answered correctly after retries
+     * still counts: eventual success is success.
+     */
+    private val learnedItemIds = mutableSetOf<String>()
 
     init {
         val questions = contentRepository.buildQuiz(
@@ -144,6 +155,7 @@ class QuizViewModel @Inject constructor(
 
         if (index == question.correctIndex) {
             feedbackPlayer.onCorrect()
+            learnedItemIds += question.subjectItemId
             val nextCorrect = state.correctCount + 1
             _uiState.update {
                 it.copy(
@@ -207,8 +219,10 @@ class QuizViewModel @Inject constructor(
 
     /** Replays the current question's audio. */
     fun onReplayPrompt() {
-        _uiState.value.currentQuestion?.let { speakPrompt(it) }
+        // Tap first: the pop is 90ms and speech must not start under it, or the
+        // start of the prompt is masked (see FeedbackPlayer).
         feedbackPlayer.onTap()
+        _uiState.value.currentQuestion?.let { speakPrompt(it) }
     }
 
     private fun speakPrompt(question: QuizQuestion) {
@@ -221,7 +235,7 @@ class QuizViewModel @Inject constructor(
             val total = _uiState.value.questions.size
             val result = recordQuizResult(
                 moduleType = moduleType,
-                itemIds = itemIds,
+                itemIds = learnedItemIds.toList(),
                 correctAnswers = correctCount,
                 totalQuestions = total,
                 today = LocalDate.now(),
@@ -242,7 +256,6 @@ class QuizViewModel @Inject constructor(
         const val ARG_ITEM_IDS = "itemIds"
         const val ARG_QUESTION_COUNT = "questionCount"
         const val ARG_SEED = "seed"
-        const val NO_ITEMS = "-"
         const val DEFAULT_QUESTION_COUNT = 5
 
         /** Upper bound keeps a malformed route from generating 1000 questions. */

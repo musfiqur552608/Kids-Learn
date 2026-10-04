@@ -29,16 +29,46 @@ data class GameScore(
     val playedAt: LocalDate,
 )
 
-/** The three mini-games in the Games hub. */
+/** The mini-games in the Games hub. Stored by name in Room, so append only. */
 enum class GameType {
     MEMORY_MATCH,
     FIND_THE_CORRECT_ONE,
     TIMED_QUIZ,
+    ODD_ONE_OUT,
     ;
 
     companion object {
         fun fromKey(key: String): GameType =
             entries.firstOrNull { it.name == key } ?: TIMED_QUIZ
+    }
+}
+
+/**
+ * One day of practice: lessons touched (a lesson whose last attempt was that
+ * day) and games played. Lessons are an approximation - Room keeps the
+ * high-water mark per lesson, not full history - while games are exact.
+ */
+data class DayActivity(
+    val date: java.time.LocalDate,
+    val lessons: Int,
+    val games: Int,
+) {
+    val total: Int get() = lessons + games
+}
+
+/**
+ * The last seven days, oldest first, ending today. Always seven entries, even
+ * with no history, so the parent-zone chart never changes shape.
+ */
+data class WeeklyActivity(
+    val days: List<DayActivity>,
+) {
+    val totalLessons: Int get() = days.sumOf { it.lessons }
+    val totalGames: Int get() = days.sumOf { it.games }
+
+    companion object {
+        fun empty(today: java.time.LocalDate = java.time.LocalDate.now()): WeeklyActivity =
+            WeeklyActivity((6 downTo 0).map { DayActivity(today.minusDays(it.toLong()), 0, 0) })
     }
 }
 

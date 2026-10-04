@@ -90,7 +90,7 @@ fun MemoryMatchScreen(
             StatPill(
                 icon = Icons.Filled.TouchApp,
                 value = "${state.matchedPairs}/${state.totalPairs}",
-                label = stringResource(R.string.progress_badges),
+                label = stringResource(R.string.game_pairs),
                 tint = accent,
             )
             Text(
@@ -217,6 +217,65 @@ fun FindCorrectScreen(
                 color = accent,
             )
         }
+
+        Text(
+            text = pluralStringResource(R.plurals.game_rounds, state.round + 1, state.round + 1, state.totalRounds),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 20.dp),
+        )
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            state.options.forEachIndexed { index, option ->
+                AnswerTile(
+                    label = option,
+                    state = AnswerTileState.IDLE,
+                    onClick = { onOptionTapped(index) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                )
+            }
+        }
+    }
+}
+
+/**
+ * "Odd one out": three tiles match, one does not.
+ *
+ * The round counter and the pulsing mascot line carry the instruction, so the
+ * grid itself stays quiet: four large glyphs with no competing decoration.
+ */
+@Composable
+fun OddOneOutScreen(
+    state: OddOneOutUiState,
+    onBack: () -> Unit,
+    onOptionTapped: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val accent = KidTheme.colors.games
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+    ) {
+        KidTopBar(
+            title = stringResource(R.string.game_odd_one_out),
+            moduleType = null,
+            onBack = onBack,
+        )
+
+        MascotSpeech(
+            message = stringResource(R.string.game_odd_one_out_subtitle),
+            mood = if (state.mistakes > 0) MascotMood.ENCOURAGE else MascotMood.HAPPY,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+        )
 
         Text(
             text = pluralStringResource(R.plurals.game_rounds, state.round + 1, state.round + 1, state.totalRounds),

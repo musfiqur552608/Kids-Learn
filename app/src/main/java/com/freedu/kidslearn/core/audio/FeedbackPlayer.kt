@@ -70,9 +70,21 @@ class FeedbackPlayer @Inject constructor(
 
     // ------------------------------------------------------------ pronunciation
 
-    /** Reads a lesson's letter and its example word in the module's language. */
+    /**
+     * Reads a lesson's letter and its example word in the module's language.
+     *
+     * The phrasing is per-language, not just the voice: "$letter for $word" is an
+     * English sentence frame, and feeding it to a Bangla or Arabic voice makes the
+     * engine pronounce the English word "for" as Bangla/Arabic - which is exactly
+     * the "wrong sound" a parent hears. Bangla and Arabic primers simply juxtapose
+     * the letter and the word ("খ, খেলা" / "ب, بطة"), so that is what is spoken.
+     */
     fun pronounceLesson(moduleType: ModuleType, letter: String, word: String) {
-        speech.speak("$letter. $letter for $word", Locales.forModule(moduleType))
+        val text = when (moduleType) {
+            ModuleType.ENGLISH -> "$letter. $letter for $word"
+            ModuleType.BANGLA, ModuleType.ARABIC, ModuleType.MATHS -> "$letter, $word"
+        }
+        speech.speak(text, Locales.forModule(moduleType))
     }
 
     /** Reads a quiz prompt, e.g. "How many?" or "3 plus 2". */
@@ -101,12 +113,15 @@ class FeedbackPlayer @Inject constructor(
         companion object {
             private var index = 0
 
+            /** Praise-only rotation: TryAgain is for wrong answers, never praise. */
+            private val praise = entries.filter { it != TryAgain }
+
             /**
              * Round-robins rather than being random: a random praise repeats often
              * enough to feel canned, and a fixed order is easy to test.
              */
             fun random(): Encouragement {
-                val value = entries[index % entries.size]
+                val value = praise[index % praise.size]
                 index++
                 return value
             }

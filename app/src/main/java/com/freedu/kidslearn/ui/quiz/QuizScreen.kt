@@ -185,7 +185,10 @@ private fun promptTextFor(state: QuizUiState, question: QuizQuestion): String = 
     state.hasAnsweredCurrent -> stringResource(R.string.quiz_answer_correct)
     question.kind == QuizKind.COUNT_OBJECTS -> stringResource(R.string.quiz_how_many)
     question.kind == QuizKind.PICTURE_TO_LETTER -> stringResource(R.string.quiz_tap_the_letter)
-    else -> stringResource(R.string.quiz_tap_the_picture)
+    question.kind == QuizKind.LETTER_TO_PICTURE -> stringResource(R.string.quiz_tap_the_picture)
+    // Sums, differences and shape/colour cards ask for a tap on the *answer*,
+    // not on a picture - "tap the picture" would point at the wrong thing.
+    else -> stringResource(R.string.maths_tap_the_answer)
 }
 
 /** The big thing being asked about: an emoji, a letter, or a sum. */

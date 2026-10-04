@@ -15,6 +15,13 @@ interface GameScoreDao {
     fun observeRecent(limit: Int): Flow<List<GameScoreEntity>>
 
     /**
+     * Everything played on or after [earliest] (`yyyy-MM-dd`). ISO dates order
+     * lexicographically, so a plain string comparison is a date comparison.
+     */
+    @Query("SELECT * FROM game_score WHERE played_at >= :earliest ORDER BY played_at ASC")
+    fun observeSince(earliest: String): Flow<List<GameScoreEntity>>
+
+    /**
      * `COALESCE` matters: on a brand-new install the table is empty, and a bare
      * `MAX(score)` would emit `null` into a `Flow<Int>`, crashing the collector.
      */

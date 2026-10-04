@@ -9,7 +9,9 @@ import com.freedu.kidslearn.domain.model.AppSettings
 import com.freedu.kidslearn.domain.model.Badge
 import com.freedu.kidslearn.domain.model.BadgeKey
 import com.freedu.kidslearn.domain.model.DashboardSnapshot
+import com.freedu.kidslearn.domain.model.DayActivity
 import com.freedu.kidslearn.domain.model.GameResult
+import com.freedu.kidslearn.domain.model.WeeklyActivity
 import com.freedu.kidslearn.domain.model.GameScore
 import com.freedu.kidslearn.domain.model.GameType
 import com.freedu.kidslearn.domain.model.ModuleProgress
@@ -30,6 +32,8 @@ import com.freedu.kidslearn.ui.games.GamesHubScreen
 import com.freedu.kidslearn.ui.games.GamesHubUiState
 import com.freedu.kidslearn.ui.games.MemoryMatchScreen
 import com.freedu.kidslearn.ui.games.MemoryUiState
+import com.freedu.kidslearn.ui.games.OddOneOutScreen
+import com.freedu.kidslearn.ui.games.OddOneOutUiState
 import com.freedu.kidslearn.ui.games.TimedQuizScreen
 import com.freedu.kidslearn.ui.games.TimedQuizUiState
 import com.freedu.kidslearn.ui.home.HomeScreen
@@ -103,6 +107,7 @@ class ScreenRenderingTest {
         correctIndex = 0,
         speakText = "A, A for Apple",
         speakLocale = "en-US",
+        subjectItemId = "ENGLISH_A",
     )
 
     private fun dashboard(
@@ -189,6 +194,7 @@ class ScreenRenderingTest {
                 onClearSelection = {},
                 onPronounce = {},
                 onTakeQuiz = {},
+                onTraceComplete = {},
             )
         }
         // R.plurals.letters_count - the call that shipped a <plurals> id to
@@ -211,6 +217,7 @@ class ScreenRenderingTest {
                 onClearSelection = {},
                 onPronounce = {},
                 onTakeQuiz = {},
+                onTraceComplete = {},
             )
         }
         compose.onNode(hasText("0 of 0 learned")).assertExists()
@@ -271,7 +278,6 @@ class ScreenRenderingTest {
                 onAnswerChanged = {},
                 onSubmitAnswer = {},
                 onSetSound = {},
-                onSetMusic = {},
                 onSetLanguage = {},
                 onSetTheme = {},
                 onSetChildName = {},
@@ -285,6 +291,38 @@ class ScreenRenderingTest {
     }
 
     @Test
+    fun parentZoneRendersWeeklyChart() {
+        val today = LocalDate.now()
+        render {
+            ParentZoneScreen(
+                state = ParentZoneUiState(
+                    gate = ParentGateState.Passed,
+                    settings = AppSettings.DEFAULT,
+                    dashboard = dashboard(),
+                    weekly = WeeklyActivity(
+                        (6 downTo 0).map { back ->
+                            DayActivity(today.minusDays(back.toLong()), lessons = back, games = 1)
+                        },
+                    ),
+                ),
+                onBack = {},
+                onRequireGate = {},
+                onDismissGate = {},
+                onAnswerChanged = {},
+                onSubmitAnswer = {},
+                onSetSound = {},
+                onSetLanguage = {},
+                onSetTheme = {},
+                onSetChildName = {},
+                onSetParentGate = {},
+                onResetProgress = {},
+                onAcknowledgeReset = {},
+            )
+        }
+        compose.onNode(hasText("This week", substring = true)).assertExists()
+    }
+
+    @Test
     fun mathsScreenRenders() {
         render {
             MathsScreen(
@@ -295,6 +333,7 @@ class ScreenRenderingTest {
                 onClearSelection = {},
                 onTakeQuiz = {},
                 onPronounce = {},
+                onPronounceShape = {},
             )
         }
     }
@@ -308,6 +347,7 @@ class ScreenRenderingTest {
                         GameCardUi(GameType.MEMORY_MATCH, bestScore = 9),
                         GameCardUi(GameType.FIND_THE_CORRECT_ONE, bestScore = 0),
                         GameCardUi(GameType.TIMED_QUIZ, bestScore = 4),
+                        GameCardUi(GameType.ODD_ONE_OUT, bestScore = 0),
                     ),
                     isLoading = false,
                 ),
@@ -337,6 +377,24 @@ class ScreenRenderingTest {
                 onOptionTapped = {},
             )
         }
+    }
+
+    @Test
+    fun oddOneOutRendersRoundProgress() {
+        render {
+            OddOneOutScreen(
+                state = OddOneOutUiState(
+                    options = listOf("A", "A", "A", "B"),
+                    oddIndex = 3,
+                    round = 2,
+                    totalRounds = 8,
+                    correctAnswers = 3,
+                ),
+                onBack = {},
+                onOptionTapped = {},
+            )
+        }
+        compose.onNode(hasText("Odd one out", substring = true)).assertExists()
     }
 
     @Test
@@ -381,6 +439,7 @@ class ScreenRenderingTest {
                     starsEarned = 3,
                     coinsEarned = 15,
                     itemIds = listOf("A", "B", "C", "D", "E"),
+                    newBadges = listOf(BadgeKey.FIRST_STEP),
                 ),
                 showCelebration = false,
                 onPlayAgain = {},
@@ -392,6 +451,8 @@ class ScreenRenderingTest {
         // `result_stars_earned` is also resolved here: it is an argument of the
         // celebration overlay, so it formats during composition even while hidden.
         compose.onNode(hasText("5 out of 5")).assertExists()
+        // The newly unlocked badge is announced inline on the result screen.
+        compose.onNode(hasText("First step", substring = true)).assertExists()
     }
 
     @Test
@@ -416,6 +477,29 @@ class ScreenRenderingTest {
         // "one" branch here ("You earned 1 star"), which is where a bad argument
         // order would blow up.
         compose.onNode(hasText("1 out of 5")).assertExists()
+    }
+
+    @Test
+    fun quizResultRendersPersonalBest() {
+        render {
+            QuizResultScreen(
+                result = QuizResult(
+                    moduleType = ModuleType.ENGLISH,
+                    totalQuestions = 5,
+                    correctAnswers = 4,
+                    starsEarned = 2,
+                    coinsEarned = 10,
+                    itemIds = listOf("A", "B", "C", "D"),
+                    isNewPersonalBest = true,
+                ),
+                showCelebration = false,
+                onPlayAgain = {},
+                onGoHome = {},
+                onDismissCelebration = {},
+            )
+        }
+        // Shown on the game result screen too; the quiz used to omit it.
+        compose.onNode(hasText("New best!", substring = true)).assertExists()
     }
 
     @Test

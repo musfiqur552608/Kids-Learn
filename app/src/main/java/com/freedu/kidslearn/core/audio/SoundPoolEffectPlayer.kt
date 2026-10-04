@@ -61,6 +61,9 @@ class SoundPoolEffectPlayer @Inject constructor(
             .getOrDefault(0)
     }
 
+    // Written from the settings collector, read on the UI thread: volatile so a
+    // freshly unmuted tap can never observe a stale `true`.
+    @Volatile
     private var isMuted: Boolean = true
 
     init {

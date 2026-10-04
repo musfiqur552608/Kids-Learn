@@ -58,6 +58,16 @@ data class QuizQuestion(
     val correctIndex: Int,
     val speakText: String,
     val speakLocale: String,
+    /**
+     * The lesson this question teaches, for progress recording.
+     *
+     * A letter question's subject is its letter's item id; a counting question's
+     * is its [CountingItem] id (arithmetic inherits its spawning item's id); a
+     * shape question's is its [ShapeItem] id. The quiz reports exactly the
+     * subjects answered correctly, which is what makes "X of 26 learned" move
+     * after a mixed quiz - and what stops a failed quiz from marking anything.
+     */
+    val subjectItemId: String,
 ) {
     init {
         require(options.size >= 2) { "A quiz question needs at least 2 options" }

@@ -92,12 +92,13 @@ class KidsNavigationTest {
     }
 
     @Test
-    fun theGamesHubListsAllThreeGames() {
+    fun theGamesHubListsAllFourGames() {
         setContent(startDestination = Route.GamesHub)
 
         composeRule.onNodeWithText("Memory match").assertIsDisplayed()
         composeRule.onNodeWithText("Find it").assertIsDisplayed()
         composeRule.onNodeWithText("Quick quiz").assertIsDisplayed()
+        composeRule.onNodeWithText("Odd one out").assertIsDisplayed()
     }
 
     @Test

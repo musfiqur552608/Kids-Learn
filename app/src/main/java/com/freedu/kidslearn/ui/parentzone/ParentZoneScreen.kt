@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -69,7 +72,6 @@ fun ParentZoneScreen(
     onAnswerChanged: (String) -> Unit,
     onSubmitAnswer: () -> Unit,
     onSetSound: (Boolean) -> Unit,
-    onSetMusic: (Boolean) -> Unit,
     onSetLanguage: (UiLanguage) -> Unit,
     onSetTheme: (ThemeMode) -> Unit,
     onSetChildName: (String) -> Unit,
@@ -122,7 +124,8 @@ fun ParentZoneScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item { StatsSection(state) }
-            item { SettingsSection(state, onSetSound, onSetMusic, onSetLanguage, onSetTheme, onSetChildName) }
+            item { WeeklySection(state.weekly) }
+            item { SettingsSection(state, onSetSound, onSetLanguage, onSetTheme, onSetChildName) }
             item { GateToggleSection(state, onSetParentGate) }
             item { ResetSection(onResetProgress) }
             item { AboutSection() }
@@ -181,7 +184,150 @@ private fun StatsSection(state: ParentZoneUiState) {
                 barColor = KidTheme.colors.accentFor(module.moduleType),
                 percentText = pluralStringResource(R.plurals.progress_percent, module.completionPercent, module.completionPercent),
             )
+            Text(
+                text = stringResource(
+                    R.string.parent_zone_module_stars,
+                    module.totalStars,
+                    module.maxStars,
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = KidTheme.colors.starGold,
+            )
             Spacer(Modifier.height(10.dp))
+        }
+    }
+}
+
+/**
+ * Seven days of practice, oldest first.
+ *
+ * Deliberately static - no pulse, no animation. This screen is for the parent,
+ * and the one place a dancing chart would be charming is exactly where it
+ * would undermine trust in the numbers.
+ */
+@Composable
+private fun WeeklySection(weekly: com.freedu.kidslearn.domain.model.WeeklyActivity) {
+    SectionCard {
+        Text(
+            text = stringResource(R.string.parent_zone_weekly_title),
+            style = MaterialTheme.typography.titleMedium,
+            color = KidTheme.colors.parentZone,
+        )
+        Spacer(Modifier.height(12.dp))
+        if (weekly.days.all { it.total == 0 }) {
+            Text(
+                text = stringResource(R.string.parent_zone_weekly_empty),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            WeeklyChart(weekly = weekly)
+            Spacer(Modifier.height(10.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                LegendDot(
+                    color = KidTheme.colors.progress,
+                    text = "${stringResource(R.string.progress_lessons)}: ${weekly.totalLessons}",
+                )
+                LegendDot(
+                    color = KidTheme.colors.games,
+                    text = "${stringResource(R.string.progress_games)}: ${weekly.totalGames}",
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun LegendDot(color: Color, text: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        androidx.compose.foundation.Canvas(modifier = Modifier.padding(end = 6.dp).size(10.dp)) {
+            drawCircle(color = color)
+        }
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun WeeklyChart(
+    weekly: com.freedu.kidslearn.domain.model.WeeklyActivity,
+    modifier: Modifier = Modifier,
+) {
+    val max = (weekly.days.maxOfOrNull { it.total } ?: 0).coerceAtLeast(1).toFloat()
+    val lessonColor = KidTheme.colors.progress
+    val gameColor = KidTheme.colors.games
+    val trackColor = MaterialTheme.colorScheme.surfaceVariant
+    // Read through LocalConfiguration (not Locale.getDefault(), which lint flags
+    // as non-observable): a language change recreates the activity anyway, and
+    // this keeps the day initials in step without a stale-locale render.
+    val systemLocale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
+    val dayLabels = weekly.days.map {
+        it.date.dayOfWeek.getDisplayName(java.time.format.TextStyle.NARROW, systemLocale)
+    }
+    val summary = "${stringResource(R.string.progress_lessons)}: ${weekly.totalLessons}, " +
+        "${stringResource(R.string.progress_games)}: ${weekly.totalGames}"
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        androidx.compose.foundation.Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(140.dp)
+                .semantics { contentDescription = summary },
+        ) {
+            val groups = weekly.days.size
+            val groupWidth = size.width / groups
+            val barWidth = groupWidth * 0.26f
+            weekly.days.forEachIndexed { index, day ->
+                val cx = groupWidth * index + groupWidth / 2f
+                // Faint full-height track so an empty day still reads as a day.
+                drawRoundRect(
+                    color = trackColor,
+                    topLeft = androidx.compose.ui.geometry.Offset(cx - barWidth - 2f, 0f),
+                    size = androidx.compose.ui.geometry.Size(barWidth * 2f + 4f, size.height),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(6f, 6f),
+                )
+                if (day.lessons > 0) {
+                    val h = size.height * (day.lessons / max)
+                    drawRoundRect(
+                        color = lessonColor,
+                        topLeft = androidx.compose.ui.geometry.Offset(cx - barWidth - 1f, size.height - h),
+                        size = androidx.compose.ui.geometry.Size(barWidth, h),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(4f, 4f),
+                    )
+                }
+                if (day.games > 0) {
+                    val h = size.height * (day.games / max)
+                    drawRoundRect(
+                        color = gameColor,
+                        topLeft = androidx.compose.ui.geometry.Offset(cx + 1f, size.height - h),
+                        size = androidx.compose.ui.geometry.Size(barWidth, h),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(4f, 4f),
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.height(6.dp))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            dayLabels.forEachIndexed { index, label ->
+                Text(
+                    text = label,
+                    style = if (index == dayLabels.lastIndex) {
+                        MaterialTheme.typography.labelLarge
+                    } else {
+                        MaterialTheme.typography.labelMedium
+                    },
+                    color = if (index == dayLabels.lastIndex) {
+                        MaterialTheme.colorScheme.onSurface
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }
@@ -190,7 +336,6 @@ private fun StatsSection(state: ParentZoneUiState) {
 private fun SettingsSection(
     state: ParentZoneUiState,
     onSetSound: (Boolean) -> Unit,
-    onSetMusic: (Boolean) -> Unit,
     onSetLanguage: (UiLanguage) -> Unit,
     onSetTheme: (ThemeMode) -> Unit,
     onSetChildName: (String) -> Unit,
@@ -219,12 +364,6 @@ private fun SettingsSection(
             checked = settings.soundEnabled,
             onCheckedChange = onSetSound,
         )
-        SettingSwitch(
-            label = stringResource(R.string.parent_zone_music),
-            checked = settings.musicEnabled,
-            onCheckedChange = onSetMusic,
-        )
-
         Spacer(Modifier.height(12.dp))
         ChoiceRow(
             label = stringResource(R.string.parent_zone_language),
@@ -398,7 +537,11 @@ private fun ParentGateDialog(
                 Mascot(mood = MascotMood.HAPPY, size = 72.dp)
                 Spacer(Modifier.height(10.dp))
                 Text(
-                    text = pluralStringResource(R.plurals.parent_gate_question, 1, state.question.prompt),
+                    text = pluralStringResource(
+                        R.plurals.parent_gate_question,
+                        state.question.answer,
+                        state.question.prompt,
+                    ),
                     style = MaterialTheme.typography.displaySmall,
                     color = KidTheme.colors.parentZone,
                     textAlign = TextAlign.Center,
@@ -417,6 +560,9 @@ private fun ParentGateDialog(
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = androidx.compose.foundation.text.KeyboardActions(
+                        onDone = { onSubmit() },
                     ),
                     modifier = Modifier.fillMaxWidth(),
                 )

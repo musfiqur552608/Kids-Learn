@@ -39,7 +39,6 @@ fun KidProgressBar(
     height: androidx.compose.ui.unit.Dp = 22.dp,
     trackColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     barColor: Color = MaterialTheme.colorScheme.primary,
-    label: String? = null,
 ) {
     val clamped = progress.coerceIn(0f, 1f)
     val animated by animateFloatAsState(
@@ -47,7 +46,6 @@ fun KidProgressBar(
         animationSpec = tween(durationMillis = 700),
         label = "progress-fill",
     )
-    val description = label ?: "${(clamped * 100).toInt()} percent complete"
 
     Box(
         modifier = modifier
@@ -69,7 +67,12 @@ fun KidProgressBar(
     }
 }
 
-/** A labelled progress bar: name, count and the bar itself. */
+/**
+ * A labelled progress bar: name, count and the bar itself.
+ *
+ * The TalkBack description goes through `cd_module_progress` rather than an
+ * inline template so it is translated (and correctly ordered) in every locale.
+ */
 @Composable
 fun LabelledProgress(
     title: String,
@@ -80,7 +83,13 @@ fun LabelledProgress(
     percentText: String? = null,
 ) {
     val fraction = if (total == 0) 0f else completed.toFloat() / total
-    val description = "$title, $completed of $total complete"
+    val description = androidx.compose.ui.res.pluralStringResource(
+        com.freedu.kidslearn.R.plurals.cd_module_progress,
+        completed,
+        title,
+        completed,
+        total,
+    )
 
     Column(
         modifier = modifier

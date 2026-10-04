@@ -70,6 +70,7 @@ fun AlphabetModuleScreen(
     onClearSelection: () -> Unit,
     onPronounce: (LetterItem) -> Unit,
     onTakeQuiz: (LetterItem?) -> Unit,
+    onTraceComplete: (com.freedu.kidslearn.ui.components.TraceResult) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val accent = KidTheme.colors.accentFor(state.moduleType)
@@ -127,6 +128,7 @@ fun AlphabetModuleScreen(
                     onBack = onClearSelection,
                     onPronounce = { onPronounce(item) },
                     onTakeQuiz = { onTakeQuiz(item) },
+                    onTraceComplete = onTraceComplete,
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -168,12 +170,6 @@ private fun AlphabetOverview(
             KidProgressBar(
                 progress = state.completionFraction,
                 barColor = accent,
-                label = androidx.compose.ui.res.pluralStringResource(
-                    com.freedu.kidslearn.R.plurals.letters_count,
-                    state.completedItems,
-                    state.completedItems,
-                    state.totalItems,
-                ),
             )
 
             Text(
@@ -343,6 +339,7 @@ private fun LetterDetail(
     onBack: () -> Unit,
     onPronounce: () -> Unit,
     onTakeQuiz: () -> Unit,
+    onTraceComplete: (com.freedu.kidslearn.ui.components.TraceResult) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val accent = KidTheme.colors.accentFor(moduleType)
@@ -419,7 +416,7 @@ private fun LetterDetail(
                     Spacer(Modifier.height(8.dp))
                     com.freedu.kidslearn.ui.components.LetterTracingCanvas(
                         guide = guide,
-                        onTraceFinished = { },
+                            onTraceFinished = onTraceComplete,
                         accentColor = accent,
                         modifier = Modifier
                             .fillMaxWidth()

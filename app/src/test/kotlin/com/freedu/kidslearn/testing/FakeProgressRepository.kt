@@ -8,11 +8,14 @@ import com.freedu.kidslearn.domain.model.GameType
 import com.freedu.kidslearn.domain.model.LessonProgress
 import com.freedu.kidslearn.domain.model.ModuleProgress
 import com.freedu.kidslearn.domain.model.ModuleType
+import com.freedu.kidslearn.data.repository.bucketWeekly
 import com.freedu.kidslearn.domain.model.UserStats
+import com.freedu.kidslearn.domain.model.WeeklyActivity
 import com.freedu.kidslearn.domain.repository.ProgressRepository
 import com.freedu.kidslearn.domain.repository.StatsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 
@@ -53,18 +56,21 @@ class FakeProgressRepository : ProgressRepository, StatsRepository {
     ) {
         val key = moduleType to itemId
         val existing = lessonRows.value[key]
-        // Mirrors the SQL `MAX(stars_earned, excluded.stars_earned)` upsert.
+        // Mirrors the SQL upsert: `MAX(stars_earned, ...)` high-water mark, and
+        // completion granted by stars, never by a scoreless attempt.
         val best = maxOf(existing?.starsEarned ?: 0, starsEarned)
+        val wasCompleted = existing?.isCompleted == true
+        val nowCompleted = wasCompleted || starsEarned > 0
         lessonRows.value = lessonRows.value + (
             key to LessonProgress(
                 moduleType = moduleType,
                 itemId = itemId,
-                isCompleted = true,
+                isCompleted = nowCompleted,
                 starsEarned = best,
                 lastAttemptDate = today,
             )
             )
-        if (existing?.isCompleted != true) {
+        if (!wasCompleted && nowCompleted) {
             stats.value = stats.value.copy(
                 lessonsCompleted = stats.value.lessonsCompleted + 1,
             )
@@ -117,6 +123,15 @@ class FakeProgressRepository : ProgressRepository, StatsRepository {
             gameRows,
         ) { s, modules, b, scores ->
             DashboardSnapshot(stats = s, modules = modules, badges = b, recentScores = scores)
+        }
+
+    override fun observeWeeklyActivity(today: LocalDate): Flow<WeeklyActivity> =
+        combine(lessonRows, gameRows) { lessons, games ->
+            bucketWeekly(
+                lessonDates = lessons.values.map { it.lastAttemptDate },
+                gameDates = games.map { it.playedAt },
+                today = today,
+            )
         }
 
     override suspend fun touchActivity(today: LocalDate): UserStats = stats.value

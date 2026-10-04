@@ -6,6 +6,7 @@ import com.freedu.kidslearn.domain.model.AppSettings
 import com.freedu.kidslearn.domain.model.DashboardSnapshot
 import com.freedu.kidslearn.domain.model.ThemeMode
 import com.freedu.kidslearn.domain.model.UiLanguage
+import com.freedu.kidslearn.domain.model.WeeklyActivity
 import com.freedu.kidslearn.domain.repository.SettingsRepository
 import com.freedu.kidslearn.domain.repository.StatsRepository
 import com.freedu.kidslearn.domain.usecase.GenerateParentGateUseCase
@@ -41,6 +42,7 @@ data class ParentZoneUiState(
     val gate: ParentGateState = ParentGateState.Hidden,
     val settings: AppSettings = AppSettings.DEFAULT,
     val dashboard: DashboardSnapshot = DashboardSnapshot(),
+    val weekly: WeeklyActivity = WeeklyActivity.empty(),
     val resetDone: Boolean = false,
 )
 
@@ -73,9 +75,10 @@ class ParentZoneViewModel @Inject constructor(
     val uiState: StateFlow<ParentZoneUiState> = combine(
         settingsRepository.settings,
         statsRepository.observeDashboard(),
+        statsRepository.observeWeeklyActivity(java.time.LocalDate.now()),
         gate,
         resetDone,
-    ) { settings, dashboard, gateState, done ->
+    ) { settings, dashboard, weekly, gateState, done ->
         ParentZoneUiState(
             gate = if (gateState is ParentGateState.Awaiting) {
                 gateState.copy(entered = entered.value, wasWrong = wasWrong.value)
@@ -84,6 +87,7 @@ class ParentZoneViewModel @Inject constructor(
             },
             settings = settings,
             dashboard = dashboard,
+            weekly = weekly,
             resetDone = done,
         )
     }.stateIn(
@@ -98,7 +102,10 @@ class ParentZoneViewModel @Inject constructor(
         if (_passed) return
         entered.value = ""
         wasWrong.value = false
-        gate.value = ParentGateState.Awaiting(generateGate(), "", false)
+        // A fresh seed per challenge: the use case defaults to one question per
+        // day, which would let a child memorise this morning's sum and walk
+        // through the gate all afternoon.
+        gate.value = ParentGateState.Awaiting(generateGate(System.nanoTime()), "", false)
     }
 
     /** Leaves the gate, e.g. when the parent taps Cancel. */
@@ -122,7 +129,7 @@ class ParentZoneViewModel @Inject constructor(
             // A fresh question each time defeats memorisation.
             wasWrong.value = true
             entered.value = ""
-            gate.value = ParentGateState.Awaiting(generateGate(), "", true)
+            gate.value = ParentGateState.Awaiting(generateGate(System.nanoTime()), "", true)
         }
     }
 
@@ -140,10 +147,6 @@ class ParentZoneViewModel @Inject constructor(
 
     fun setSoundEnabled(enabled: Boolean) = viewModelScope.launch {
         settingsRepository.setSoundEnabled(enabled)
-    }
-
-    fun setMusicEnabled(enabled: Boolean) = viewModelScope.launch {
-        settingsRepository.setMusicEnabled(enabled)
     }
 
     fun setLanguage(language: UiLanguage) = viewModelScope.launch {

@@ -51,7 +51,8 @@ class GamesHubViewModel @Inject constructor(
         progressRepository.observeBestScore(GameType.MEMORY_MATCH),
         progressRepository.observeBestScore(GameType.FIND_THE_CORRECT_ONE),
         progressRepository.observeBestScore(GameType.TIMED_QUIZ),
-    ) { memory, findIt, timed -> Triple(memory, findIt, timed) }
+        progressRepository.observeBestScore(GameType.ODD_ONE_OUT),
+    ) { scores -> scores.toList() }
 
     val uiState: StateFlow<GamesHubUiState> = combine(
         bestScores,
@@ -59,9 +60,10 @@ class GamesHubViewModel @Inject constructor(
     ) { bests, recent ->
         GamesHubUiState(
             games = listOf(
-                GameCardUi(GameType.MEMORY_MATCH, bests.first),
-                GameCardUi(GameType.FIND_THE_CORRECT_ONE, bests.second),
-                GameCardUi(GameType.TIMED_QUIZ, bests.third),
+                GameCardUi(GameType.MEMORY_MATCH, bests[0]),
+                GameCardUi(GameType.FIND_THE_CORRECT_ONE, bests[1]),
+                GameCardUi(GameType.TIMED_QUIZ, bests[2]),
+                GameCardUi(GameType.ODD_ONE_OUT, bests[3]),
             ),
             recent = recent,
             isLoading = false,

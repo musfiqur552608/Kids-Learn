@@ -77,6 +77,93 @@ class ContentCatalogTest {
     }
 
     @Test
+    fun `transliterations carry no disambiguation hacks`() {
+        // tho2 / kho2 / s' shipped: digit and apostrophe suffixes that were
+        // invented to keep labels distinct and then displayed (and nearly
+        // spoken) verbatim. Distinctness now comes from proper romanisation.
+        val all = EnglishCatalog.letters + BanglaCatalog.letters + ArabicCatalog.letters
+
+        all.forEach { item ->
+            assertThat(item.transliteration).doesNotContain("'")
+            assertThat(item.transliteration.contains(Regex("[0-9]"))).isFalse()
+        }
+    }
+
+    @Test
+    fun `visuals are unique within each alphabet module`() {
+        // The quiz rejects same-emoji distractors per question; a duplicate in
+        // the pool would silently shrink the variety instead of failing loudly.
+        listOf(
+            EnglishCatalog.letters,
+            BanglaCatalog.letters,
+            ArabicCatalog.letters,
+        ).forEach { letters ->
+            val visuals = letters.map { it.visual }
+            assertThat(visuals.distinct()).hasSize(visuals.size)
+        }
+    }
+
+    @Test
+    fun `bangla example words match their pictures`() {
+        // Regression lock for the pass that replaced mismatched pairs
+        // (আম for অ which starts with আ, "ball" for খেলা, non-words like ঈগা/ঊঁটা,
+        // যাদু which is standardly জাদু, ঠেলাগাড়ি shown as shopping cart,
+        // লাল shown as heart, ঋতু abstract season, অঞ্জলি shown as prayer).
+        val byLetter = BanglaCatalog.letters.associateBy { it.letter }
+        val expected = mapOf(
+            // letter to Triple(word, meaning, visual)
+            "অ" to Triple("অজগর", "Python", "🐍"),
+            "ই" to Triple("ইঁদুর", "Rat", "🐀"),
+            "ঈ" to Triple("ঈগল", "Eagle", "🦅"),
+            "উ" to Triple("উট", "Camel", "🐫"),
+            "ঊ" to Triple("ঊষা", "Dawn", "🌅"),
+            "ঋ" to Triple("ঋষি", "Sage", "🧙"),
+            "ঐ" to Triple("ঐক্য", "Unity", "🤝"),
+            "ও" to Triple("ওড়না", "Scarf", "🧣"),
+            "খ" to Triple("খরগোশ", "Rabbit", "🐰"),
+            "জ" to Triple("জাহাজ", "Ship", "🚢"),
+            "ঝ" to Triple("ঝুড়ি", "Basket", "🧺"),
+            "ঞ" to Triple("অঞ্জলি", "Offering", "👐"),
+            "ঠ" to Triple("ঠোঁট", "Lip", "👄"),
+            "ভ" to Triple("ভাত", "Rice", "🍚"),
+            "য" to Triple("যান", "Vehicle", "🚗"),
+            "ল" to Triple("লাল", "Red", "🔴"),
+            "ষ" to Triple("ষাঁড়", "Bull", "🐂"),
+            "ড়" to Triple("বাড়ি", "House", "🏠"),
+            "ঢ়" to Triple("আষাঢ়", "Monsoon", "🌧️"),
+            "য়" to Triple("ময়ূর", "Peacock", "🦚"),
+        )
+
+        expected.forEach { (letter, triple) ->
+            val item = byLetter.getValue(letter)
+            assertThat(item.exampleWord).isEqualTo(triple.first)
+            assertThat(item.exampleMeaning).isEqualTo(triple.second)
+            assertThat(item.visual).isEqualTo(triple.third)
+        }
+    }
+
+    @Test
+    fun `arabic and english corrected pairings`() {
+        val arabic = ArabicCatalog.letters.associateBy { it.letter }
+        assertThat(arabic.getValue("ظ").exampleWord).isEqualTo("ظَرْف")
+        assertThat(arabic.getValue("ظ").visual).isEqualTo("✉️")
+        assertThat(arabic.getValue("ق").exampleWord).isEqualTo("قِطَّة")
+        // Regression lock: ر was dance verb, ل was dialect milk, غ was deer-for-gazelle.
+        assertThat(arabic.getValue("ر").exampleWord).isEqualTo("رَجُل")
+        assertThat(arabic.getValue("ر").visual).isEqualTo("👨")
+        assertThat(arabic.getValue("ل").exampleWord).isEqualTo("لَيْمُون")
+        assertThat(arabic.getValue("ل").visual).isEqualTo("🍋")
+        assertThat(arabic.getValue("غ").exampleWord).isEqualTo("غَيْمَة")
+        assertThat(arabic.getValue("غ").visual).isEqualTo("☁️")
+
+        val english = EnglishCatalog.letters.associateBy { it.letter }
+        assertThat(english.getValue("N").exampleMeaning).isEqualTo("বাসা")
+        assertThat(english.getValue("K").exampleMeaning).isEqualTo("ঘুড়ি")
+        assertThat(english.getValue("X").exampleWord).isEqualTo("Xmas tree")
+        assertThat(english.getValue("X").visual).isEqualTo("🎄")
+    }
+
+    @Test
     fun `an unknown badge key is dropped rather than throwing`() {
         val stored = listOf("FIRST_STEP", "A_BADGE_FROM_THE_FUTURE", "STREAK_7")
 

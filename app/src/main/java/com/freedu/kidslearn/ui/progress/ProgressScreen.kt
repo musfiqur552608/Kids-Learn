@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -29,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import com.freedu.kidslearn.ui.alphabet.labelRes
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -39,7 +39,6 @@ import com.freedu.kidslearn.R
 import com.freedu.kidslearn.domain.model.BadgeKey
 import com.freedu.kidslearn.domain.model.DashboardSnapshot
 import com.freedu.kidslearn.domain.model.ModuleType
-import com.freedu.kidslearn.ui.alphabet.emoji
 import com.freedu.kidslearn.ui.alphabet.emoji as badgeEmoji
 import com.freedu.kidslearn.ui.alphabet.labelRes
 import com.freedu.kidslearn.ui.alphabet.titleRes
@@ -199,7 +198,17 @@ fun ProgressScreen(
                         color = MaterialTheme.colorScheme.onBackground,
                     )
                 }
-                items(state.recentScores, key = { "${it.gameType}-${it.playedAt}-${it.score}" }) { score ->
+                // The key includes the index: two identical games on the same day
+                // (two perfect memory runs both score 6) would otherwise share a
+                // key, and duplicate LazyColumn keys misbehave.
+                itemsIndexed(
+                    state.recentScores,
+                    key = { index, score -> "$index-${score.gameType}-${score.playedAt}-${score.score}" },
+                ) { _, score ->
+                    // Localised game name: the raw enum (MEMORY_MATCH) is
+                    // developer vocabulary, never TalkBack copy.
+                    val scoreDescription =
+                        "${stringResource(score.gameType.titleRes())}: ${score.score}"
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -207,7 +216,7 @@ fun ProgressScreen(
                             .background(MaterialTheme.colorScheme.surface)
                             .padding(14.dp)
                             .semantics {
-                                contentDescription = "${score.score}, ${score.gameType.name}"
+                                contentDescription = scoreDescription
                             },
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,

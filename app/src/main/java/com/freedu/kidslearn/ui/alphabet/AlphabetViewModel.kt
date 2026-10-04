@@ -8,11 +8,12 @@ import com.freedu.kidslearn.domain.model.AppSettings
 import com.freedu.kidslearn.domain.model.LetterCategory
 import com.freedu.kidslearn.domain.model.LetterItem
 import com.freedu.kidslearn.domain.model.ModuleType
-import com.freedu.kidslearn.domain.model.QuizQuestion
 import com.freedu.kidslearn.domain.repository.ContentRepository
 import com.freedu.kidslearn.domain.repository.ProgressRepository
 import com.freedu.kidslearn.domain.repository.SettingsRepository
 import com.freedu.kidslearn.domain.usecase.RememberLastModuleUseCase
+import com.freedu.kidslearn.ui.components.TraceQuality
+import com.freedu.kidslearn.ui.components.TraceResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -186,29 +187,25 @@ abstract class AlphabetViewModel(
         feedbackPlayer.pronounceLesson(moduleType, item.letter, item.exampleWord)
     }
 
-    // ------------------------------------------------------------------- quiz
-
     /**
-     * Builds a quiz for one letter, or a mixed quiz across the whole module.
+     * Celebrates a finished trace with sound only.
      *
-     * The seed is derived from the item id, so replaying the same letter produces
-     * the *same* questions. A child who found a question hard should meet it again
-     * rather than be graded on a different paper - and it keeps this function free
-     * of hidden state, which is what makes it testable.
+     * Tracing is practice, not assessment: it awards no stars and records no
+     * progress, but a successful trace with zero feedback reads as a dead
+     * interaction, so a good trace earns the star sound.
      */
-    fun buildQuiz(item: LetterItem?, questionCount: Int): List<QuizQuestion> =
-        contentRepository.buildQuiz(
-            moduleType = moduleType,
-            itemIds = listOfNotNull(item?.id),
-            count = questionCount,
-            seed = item?.id?.hashCode()?.toLong() ?: DEFAULT_SEED,
-        )
+    fun onTraceFinished(result: TraceResult) {
+        if (result.quality == TraceQuality.SUCCESS) {
+            feedbackPlayer.onStarEarned()
+        }
+    }
+
+    // ------------------------------------------------------------------- quiz
 
     suspend fun currentSettings(): AppSettings = settingsRepository.settings.first()
 
     protected companion object {
         const val KEY_SELECTED_ITEM = "selectedItemId"
-        const val DEFAULT_SEED = 20260927L
         const val STOP_TIMEOUT_MS = 5_000L
     }
 }

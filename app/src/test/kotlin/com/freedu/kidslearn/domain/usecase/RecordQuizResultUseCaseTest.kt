@@ -100,4 +100,14 @@ class RecordQuizResultUseCaseTest {
 
         assertThat(repository.currentStats().lessonsCompleted).isEqualTo(0)
     }
+
+    @Test
+    fun `a scoreless quiz marks nothing learned`() = runTest {
+        val result = useCase(ModuleType.ENGLISH, listOf("ENGLISH_A"), 0, 3, today)
+
+        assertThat(result.starsEarned).isEqualTo(0)
+        assertThat(repository.currentLesson(ModuleType.ENGLISH, "ENGLISH_A")?.isCompleted).isFalse()
+        assertThat(repository.currentStats().lessonsCompleted).isEqualTo(0)
+        assertThat(repository.currentBadges()).isEmpty()
+    }
 }

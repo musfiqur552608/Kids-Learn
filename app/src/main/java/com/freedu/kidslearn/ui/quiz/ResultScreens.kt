@@ -25,10 +25,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.freedu.kidslearn.R
+import com.freedu.kidslearn.domain.model.BadgeKey
 import com.freedu.kidslearn.domain.model.GameResult
 import com.freedu.kidslearn.domain.model.ModuleType
 import com.freedu.kidslearn.domain.model.QuizResult
 import com.freedu.kidslearn.ui.alphabet.labelRes
+import com.freedu.kidslearn.ui.alphabet.emoji
+import com.freedu.kidslearn.ui.alphabet.titleRes
 import com.freedu.kidslearn.ui.components.BigStat
 import com.freedu.kidslearn.ui.components.CelebrationOverlay
 import com.freedu.kidslearn.ui.components.KidButton
@@ -89,6 +92,8 @@ fun QuizResultScreen(
             Spacer(Modifier.height(12.dp))
             StarRow(stars = result.starsEarned, starSize = 48.dp)
 
+            NewBadgesCard(badges = result.newBadges, accent = accent)
+
             Spacer(Modifier.height(16.dp))
 
             Row(
@@ -108,9 +113,20 @@ fun QuizResultScreen(
                 )
                 BigStat(
                     value = "+${result.coinsEarned}",
-                    label = stringResource(R.string.cd_coin),
+                    label = stringResource(R.string.progress_total_coins),
                     color = KidTheme.colors.coinGold,
                     modifier = Modifier.weight(1f),
+                )
+            }
+
+            // The game result shows this; the quiz never did, although the data
+            // was already there - an inconsistent celebration.
+            if (result.isNewPersonalBest) {
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = stringResource(R.string.result_new_badge),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = KidTheme.colors.starGold,
                 )
             }
 
@@ -175,13 +191,20 @@ fun GameResultScreen(
             Mascot(mood = MascotMood.CHEER, size = 140.dp)
             Spacer(Modifier.height(16.dp))
             Text(
-                text = stringResource(R.string.game_you_matched),
+                // "You matched them all" is only true of memory match; the other
+                // games are headed by their own name instead.
+                text = if (result.gameType == com.freedu.kidslearn.domain.model.GameType.MEMORY_MATCH) {
+                    stringResource(R.string.game_you_matched)
+                } else {
+                    stringResource(result.gameType.titleRes())
+                },
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.height(12.dp))
             StarRow(stars = result.starsEarned, starSize = 48.dp)
+            NewBadgesCard(badges = result.newBadges, accent = accent)
             Spacer(Modifier.height(16.dp))
 
             Row(
@@ -196,7 +219,7 @@ fun GameResultScreen(
                 )
                 BigStat(
                     value = "+${result.coinsEarned}",
-                    label = stringResource(R.string.cd_coin),
+                    label = stringResource(R.string.progress_total_coins),
                     color = KidTheme.colors.coinGold,
                     modifier = Modifier.weight(1f),
                 )
@@ -237,5 +260,49 @@ fun GameResultScreen(
                 .align(Alignment.Center)
                 .padding(24.dp),
         )
+    }
+}
+
+/**
+ * Badges unlocked by the run that just finished, if any.
+ *
+ * Rendered inline rather than as another overlay: the confetti already covers
+ * the celebration, and a badge the child has to dismiss to reach the buttons
+ * would be an obstacle, not a reward.
+ */
+@Composable
+private fun NewBadgesCard(
+    badges: List<BadgeKey>,
+    accent: Color,
+    modifier: Modifier = Modifier,
+) {
+    if (badges.isEmpty()) return
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp)
+            .background(accent.copy(alpha = 0.12f), MaterialTheme.shapes.large)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.result_new_badge_earned),
+            style = MaterialTheme.typography.titleMedium,
+            color = accent,
+        )
+        badges.forEach { badge ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(text = badge.emoji(), fontSize = 28.sp)
+                Text(
+                    text = stringResource(badge.titleRes()),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
     }
 }

@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.freedu.kidslearn.core.audio.FeedbackPlayer
 import com.freedu.kidslearn.domain.model.CountingItem
 import com.freedu.kidslearn.domain.model.ModuleType
-import com.freedu.kidslearn.domain.model.QuizQuestion
 import com.freedu.kidslearn.domain.model.ShapeItem
 import com.freedu.kidslearn.domain.repository.ContentRepository
 import com.freedu.kidslearn.domain.repository.ProgressRepository
@@ -101,7 +100,8 @@ class MathsViewModel @Inject constructor(
             },
             shapes = contentRepository.shapeItems(),
             completedItems = progress.count { it.isCompleted },
-            totalItems = items.size,
+            // Single source of truth with the dashboard: counting + shapes.
+            totalItems = contentRepository.totalItems(ModuleType.MATHS),
             totalStars = progress.sumOf { it.starsEarned },
             selected = number?.let { n -> items.firstOrNull { it.number == n } },
             isLoading = false,
@@ -131,41 +131,20 @@ class MathsViewModel @Inject constructor(
         feedbackPlayer.pronouncePrompt(item.word, FeedbackPlayer.Locales.ENGLISH)
     }
 
-    /**
-     * Builds the quiz for the current tab.
-     *
-     * Counting asks about objects; plus/minus deliberately passes an empty item
-     * list so [QuizFactory] generates pure arithmetic; shapes asks about shapes.
-     */
-    fun buildQuiz(questionCount: Int): List<QuizQuestion> = when (tab.value) {
-        MathsTab.COUNTING -> contentRepository.buildQuiz(
-            moduleType = ModuleType.MATHS,
-            itemIds = emptyList(),
-            count = questionCount,
-            seed = SEED_COUNTING,
-        )
-
-        MathsTab.SHAPES -> contentRepository.buildQuiz(
-            moduleType = ModuleType.MATHS,
-            itemIds = contentRepository.shapeItems().map { it.id },
-            count = questionCount,
-            seed = SEED_SHAPES,
-        )
-
-        MathsTab.ADDITION -> contentRepository.buildQuiz(
-            moduleType = ModuleType.MATHS,
-            itemIds = emptyList(),
-            count = questionCount,
-            seed = SEED_ADDITION,
-        )
+    /** Reads a shape/colour name aloud. Shapes had no sound path at all. */
+    fun pronounceShape(item: ShapeItem) {
+        feedbackPlayer.onTap()
+        val text = if (item.colourName.isNotEmpty() && item.colourName != item.shapeName) {
+            "${item.colourName} ${item.shapeName}"
+        } else {
+            item.shapeName
+        }
+        feedbackPlayer.pronouncePrompt(text, FeedbackPlayer.Locales.ENGLISH)
     }
 
     private companion object {
         const val KEY_TAB = "mathsTab"
         const val KEY_SELECTED_NUMBER = "selectedNumber"
-        const val SEED_COUNTING = 11L
-        const val SEED_SHAPES = 22L
-        const val SEED_ADDITION = 33L
         const val STOP_TIMEOUT_MS = 5_000L
     }
 }
