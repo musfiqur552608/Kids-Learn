@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.freedu.kidslearn.domain.model.AppSettings
@@ -87,6 +88,11 @@ class SettingsRepositoryImpl @Inject constructor(
                 lastModule = prefs[Keys.LAST_MODULE]
                     ?.let { name -> ModuleType.entries.firstOrNull { it.name == name } },
                 parentGateEnabled = prefs[Keys.PARENT_GATE] ?: true,
+                dailyGoal = (prefs[Keys.DAILY_GOAL] ?: AppSettings.DEFAULT_DAILY_GOAL)
+                    .coerceIn(AppSettings.MIN_DAILY_GOAL, AppSettings.MAX_DAILY_GOAL),
+                goalCelebratedDate = prefs[Keys.GOAL_CELEBRATED_DATE]
+                    ?.takeIf { it.isNotBlank() }
+                    ?.let { runCatching { java.time.LocalDate.parse(it) }.getOrNull() },
             )
         }
         // Every screen reads settings; without this, an unrelated write would
@@ -103,6 +109,14 @@ class SettingsRepositoryImpl @Inject constructor(
         put(Keys.CHILD_NAME, name.take(MAX_CHILD_NAME_LENGTH))
 
     override suspend fun setParentGateEnabled(enabled: Boolean) = put(Keys.PARENT_GATE, enabled)
+
+    override suspend fun setDailyGoal(goal: Int) = put(
+        Keys.DAILY_GOAL,
+        goal.coerceIn(AppSettings.MIN_DAILY_GOAL, AppSettings.MAX_DAILY_GOAL),
+    )
+
+    override suspend fun markGoalCelebrated(today: java.time.LocalDate) =
+        put(Keys.GOAL_CELEBRATED_DATE, today.toString())
 
     /**
      * `null` clears the key.
@@ -129,5 +143,7 @@ class SettingsRepositoryImpl @Inject constructor(
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val LAST_MODULE = stringPreferencesKey("last_module")
         val PARENT_GATE = booleanPreferencesKey("parent_gate_enabled")
+        val DAILY_GOAL = intPreferencesKey("daily_goal")
+        val GOAL_CELEBRATED_DATE = stringPreferencesKey("goal_celebrated_date")
     }
 }

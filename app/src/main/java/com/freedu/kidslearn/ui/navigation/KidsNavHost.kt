@@ -339,6 +339,7 @@ fun KidsNavHost(
                 onSetTheme = viewModel::setThemeMode,
                 onSetChildName = viewModel::setChildName,
                 onSetParentGate = viewModel::setParentGateEnabled,
+                onSetGoal = viewModel::setDailyGoal,
                 onResetProgress = viewModel::onResetProgress,
                 onAcknowledgeReset = viewModel::acknowledgeReset,
             )

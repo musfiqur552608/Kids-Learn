@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -81,7 +82,8 @@ fun HomeScreen(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .testTag(HOME_LIST_TAG),
         contentPadding = PaddingValues(20.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
@@ -132,6 +134,10 @@ fun HomeScreen(
                     tint = KidTheme.colors.coinGold,
                 )
             }
+        }
+
+        item {
+            GoalBanner(goal = state.dailyGoal)
         }
 
         if (state.lastModule != null) {
@@ -209,6 +215,52 @@ fun HomeScreen(
         item { Spacer(Modifier.height(8.dp)) }
     }
 }
+
+/** Today's goal: practices done vs the parent-set target. */
+@Composable
+private fun GoalBanner(goal: com.freedu.kidslearn.domain.model.DailyGoalProgress) {
+    val met = goal.met
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .background(
+                if (met) KidTheme.colors.starGold.copy(alpha = 0.20f)
+                else KidTheme.colors.progress.copy(alpha = 0.14f),
+            )
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        EmojiTile(
+            emoji = if (met) "🏆" else "🎯",
+            contentDescription = null,
+            fontSize = 30.sp,
+        )
+        Spacer(Modifier.width(12.dp))
+        Column(Modifier.weight(1f)) {
+            Text(
+                text = if (met) {
+                    stringResource(R.string.home_goal_done)
+                } else {
+                    stringResource(R.string.home_goal_today, goal.doneToday, goal.goal)
+                },
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            if (!met) {
+                Spacer(Modifier.height(8.dp))
+                KidProgressBar(
+                    progress = goal.doneToday.toFloat() / goal.goal.coerceAtLeast(1),
+                    barColor = KidTheme.colors.progress,
+                    height = 12.dp,
+                )
+            }
+        }
+    }
+}
+
+/** Test tag for the module list, so tests can scroll to off-screen tiles. */
+const val HOME_LIST_TAG = "home-list"
 
 /** One large subject tile. */
 @Composable

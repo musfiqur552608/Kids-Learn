@@ -2,7 +2,9 @@ package com.freedu.kidslearn.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.freedu.kidslearn.core.audio.FeedbackPlayer
 import com.freedu.kidslearn.domain.model.AppSettings
+import com.freedu.kidslearn.domain.model.DailyGoalProgress
 import com.freedu.kidslearn.domain.model.DashboardSnapshot
 import com.freedu.kidslearn.domain.model.ModuleType
 import com.freedu.kidslearn.domain.repository.SettingsRepository
@@ -12,8 +14,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 /** A module tile on the Home screen. */
@@ -39,6 +45,7 @@ data class HomeUiState(
     val currentStreak: Int = 0,
     val gamesPlayed: Int = 0,
     val showStreakPrompt: Boolean = false,
+    val dailyGoal: DailyGoalProgress = DailyGoalProgress(AppSettings.DEFAULT_DAILY_GOAL, 0),
     val settings: AppSettings = AppSettings.DEFAULT,
     val isLoading: Boolean = true,
 ) {
@@ -56,13 +63,15 @@ data class HomeUiState(
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     statsRepository: StatsRepository,
-    settingsRepository: SettingsRepository,
+    private val settingsRepository: SettingsRepository,
+    private val feedbackPlayer: FeedbackPlayer,
 ) : ViewModel() {
 
     val uiState: StateFlow<HomeUiState> = combine(
         statsRepository.observeDashboard(),
         settingsRepository.settings,
-    ) { dashboard, settings ->
+        statsRepository.observeWeeklyActivity(LocalDate.now()),
+    ) { dashboard, settings, weekly ->
         val milestones = setOf(3, 7, 14, 30, 100)
         HomeUiState(
             childName = settings.childName,
@@ -84,6 +93,10 @@ class HomeViewModel @Inject constructor(
             // milestone rather than on every day the streak is 7 or more.
             showStreakPrompt = dashboard.stats.currentStreak in milestones &&
                 dashboard.stats.longestStreak == dashboard.stats.currentStreak,
+            dailyGoal = DailyGoalProgress(
+                goal = settings.dailyGoal,
+                doneToday = weekly.days.lastOrNull()?.total ?: 0,
+            ),
             settings = settings,
             isLoading = false,
         )
@@ -92,6 +105,21 @@ class HomeViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
         initialValue = HomeUiState(),
     )
+
+    init {
+        // Fire the goal celebration exactly once per day: when the banner flips
+        // to met and no celebration is recorded for today yet. The settings
+        // write flips the flag, so this cannot repeat within the day.
+        viewModelScope.launch {
+            uiState.map { it.dailyGoal.met && it.settings.goalCelebratedDate != LocalDate.now() }
+                .distinctUntilChanged()
+                .filter { it }
+                .collect {
+                    feedbackPlayer.onStarEarned()
+                    settingsRepository.markGoalCelebrated(LocalDate.now())
+                }
+        }
+    }
 
     private companion object {
         const val STOP_TIMEOUT_MS = 5_000L

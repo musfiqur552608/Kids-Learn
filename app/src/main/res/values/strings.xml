@@ -19,6 +19,8 @@
     <string name="home_subtitle">What shall we learn today?</string>
     <string name="home_continue_with">Keep learning: %1$s</string>
     <string name="home_modules">Subjects</string>
+    <string name="home_goal_today">%1$d of %2$d today</string>
+    <string name="home_goal_done">Daily goal smashed!</string>
 
     <!--
       Modules. Referenced from `ModuleType` via `ui/alphabet/Labels.kt`, so the
@@ -179,6 +181,9 @@
     <string name="parent_zone_theme_dark">Dark</string>
     <string name="language_english">English</string>
     <string name="language_bangla">Bangla</string>
+    <string name="parent_zone_goal_title">Daily goal</string>
+    <string name="parent_zone_goal_hint">Practices per day</string>
+    <string name="parent_zone_goal_met">Goal met %1$d of last %2$d days</string>
     <string name="parent_zone_gate_toggle">Ask a maths question</string>
     <string name="parent_zone_weekly_title">This week</string>
     <string name="parent_zone_weekly_empty">No activity yet — play a quiz or a game!</string>

@@ -40,6 +40,16 @@ class FakeSettingsRepository : SettingsRepository {
         state.value = state.value.copy(parentGateEnabled = enabled)
     }
 
+    override suspend fun setDailyGoal(goal: Int) {
+        state.value = state.value.copy(
+            dailyGoal = goal.coerceIn(AppSettings.MIN_DAILY_GOAL, AppSettings.MAX_DAILY_GOAL),
+        )
+    }
+
+    override suspend fun markGoalCelebrated(today: java.time.LocalDate) {
+        state.value = state.value.copy(goalCelebratedDate = today)
+    }
+
     /** Lets a test start from a non-default state, e.g. a child already in the app. */
     fun seed(settings: AppSettings) {
         state.value = settings

@@ -45,6 +45,16 @@ class BundledSpeechPlayerTest {
         override suspend fun setParentGateEnabled(enabled: Boolean) {
             update(current.copy(parentGateEnabled = enabled))
         }
+        override suspend fun setDailyGoal(goal: Int) {
+            update(
+                current.copy(
+                    dailyGoal = goal.coerceIn(AppSettings.MIN_DAILY_GOAL, AppSettings.MAX_DAILY_GOAL),
+                ),
+            )
+        }
+        override suspend fun markGoalCelebrated(today: java.time.LocalDate) {
+            update(current.copy(goalCelebratedDate = today))
+        }
     }
 
     private class FakeManifest(private val files: Map<String, String>) : NarrationManifest {

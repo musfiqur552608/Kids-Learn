@@ -4,10 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performScrollToNode
+import com.freedu.kidslearn.ui.home.HOME_LIST_TAG
 import com.freedu.kidslearn.domain.model.AnswerOption
 import com.freedu.kidslearn.domain.model.AppSettings
 import com.freedu.kidslearn.domain.model.Badge
 import com.freedu.kidslearn.domain.model.BadgeKey
+import com.freedu.kidslearn.domain.model.DailyGoalProgress
 import com.freedu.kidslearn.domain.model.DashboardSnapshot
 import com.freedu.kidslearn.domain.model.DayActivity
 import com.freedu.kidslearn.domain.model.GameResult
@@ -85,10 +89,19 @@ class ScreenRenderingTest {
     @get:Rule
     val compose = createComposeRule()
 
+    private companion object {
+        /** Longest stagger delay + enter tween, with headroom. */
+        const val ENTRANCE_SETTLE_MS = 1_500L
+    }
+
     private fun render(content: @Composable () -> Unit) {
         compose.setContent {
             KidsLearnTheme { content() }
         }
+        // Screens assemble with staggered entrances (see StaggeredEntrance):
+        // advance past the longest cascade + enter tween so assertions see the
+        // settled tree a user sees a beat after opening the screen.
+        compose.mainClock.advanceTimeBy(ENTRANCE_SETTLE_MS)
         compose.waitForIdle()
     }
 
@@ -159,7 +172,26 @@ class ScreenRenderingTest {
             )
         }
         // Built from R.plurals.cd_module_progress: "%1$s: %2$d of %3$d complete".
+        // Scrolled to like a user would: tiles below the fold are lazily composed.
+        compose.onNodeWithTag(HOME_LIST_TAG)
+            .performScrollToNode(hasContentDescription("English: 13 of 26 complete"))
         compose.onNode(hasContentDescription("English: 13 of 26 complete")).assertExists()
+    }
+
+    @Test
+    fun homeScreenRendersSmashedGoal() {
+        render {
+            HomeScreen(
+                state = HomeUiState(
+                    dailyGoal = DailyGoalProgress(goal = 3, doneToday = 5),
+                ),
+                onOpenModule = {},
+                onOpenGames = {},
+                onOpenProgress = {},
+                onOpenParentZone = {},
+            )
+        }
+        compose.onNode(hasText("Daily goal smashed!", substring = true)).assertExists()
     }
 
     @Test
@@ -282,6 +314,7 @@ class ScreenRenderingTest {
                 onSetTheme = {},
                 onSetChildName = {},
                 onSetParentGate = {},
+                onSetGoal = {},
                 onResetProgress = {},
                 onAcknowledgeReset = {},
             )
@@ -315,6 +348,7 @@ class ScreenRenderingTest {
                 onSetTheme = {},
                 onSetChildName = {},
                 onSetParentGate = {},
+                onSetGoal = {},
                 onResetProgress = {},
                 onAcknowledgeReset = {},
             )

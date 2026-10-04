@@ -165,6 +165,10 @@ class ParentZoneViewModel @Inject constructor(
         settingsRepository.setParentGateEnabled(enabled)
     }
 
+    fun setDailyGoal(goal: Int) = viewModelScope.launch {
+        settingsRepository.setDailyGoal(goal)
+    }
+
     /**
      * Clears all learning history. The gate is the confirmation.
      *

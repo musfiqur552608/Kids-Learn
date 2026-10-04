@@ -18,6 +18,8 @@
     <string name="home_subtitle">আজ কী শিখব?</string>
     <string name="home_continue_with">শেখা চালিয়ে যাও: %1$s</string>
     <string name="home_modules">বিষয়</string>
+    <string name="home_goal_today">আজ %2$d টির মধ্যে %1$d</string>
+    <string name="home_goal_done">দৈনিক লক্ষ্য পূরণ!</string>
 
     <string name="module_english">ইংরেজি</string>
     <string name="module_bangla">বাংলা</string>
@@ -150,6 +152,9 @@
     <string name="parent_zone_theme_dark">অন্ধকার</string>
     <string name="language_english">English</string>
     <string name="language_bangla">বাংলা</string>
+    <string name="parent_zone_goal_title">দৈনিক লক্ষ্য</string>
+    <string name="parent_zone_goal_hint">প্রতিদিনের অনুশীলন</string>
+    <string name="parent_zone_goal_met">%2$d দিনের মধ্যে %1$d দিন লক্ষ্য পূরণ</string>
     <string name="parent_zone_gate_toggle">গণিতের প্রশ্ন করো</string>
     <string name="parent_zone_weekly_title">এই সপ্তাহে</string>
     <string name="parent_zone_weekly_empty">এখনও কোনো কার্যকলাপ নেই — কুইজ বা খেলা খেলো!</string>

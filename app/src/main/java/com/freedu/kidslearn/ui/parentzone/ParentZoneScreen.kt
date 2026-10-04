@@ -76,6 +76,7 @@ fun ParentZoneScreen(
     onSetTheme: (ThemeMode) -> Unit,
     onSetChildName: (String) -> Unit,
     onSetParentGate: (Boolean) -> Unit,
+    onSetGoal: (Int) -> Unit,
     onResetProgress: () -> Unit,
     onAcknowledgeReset: () -> Unit,
     modifier: Modifier = Modifier,
@@ -125,6 +126,14 @@ fun ParentZoneScreen(
         ) {
             item { StatsSection(state) }
             item { WeeklySection(state.weekly) }
+            item {
+                GoalSection(
+                    dailyGoal = state.settings.dailyGoal,
+                    metDays = state.weekly.days.count { it.total >= state.settings.dailyGoal },
+                    totalDays = state.weekly.days.size,
+                    onSetGoal = onSetGoal,
+                )
+            }
             item { SettingsSection(state, onSetSound, onSetLanguage, onSetTheme, onSetChildName) }
             item { GateToggleSection(state, onSetParentGate) }
             item { ResetSection(onResetProgress) }
@@ -234,6 +243,67 @@ private fun WeeklySection(weekly: com.freedu.kidslearn.domain.model.WeeklyActivi
                 )
             }
         }
+    }
+}
+
+/**
+ * The daily-goal editor: stepper plus recent history.
+ *
+ * One number (practices per day) rather than separate lesson/game targets: a
+ * single stepper is explainable in one line, and the history count reuses the
+ * weekly buckets already loaded above - no extra query.
+ */
+@Composable
+private fun GoalSection(
+    dailyGoal: Int,
+    metDays: Int,
+    totalDays: Int,
+    onSetGoal: (Int) -> Unit,
+) {
+    SectionCard {
+        Text(
+            text = stringResource(R.string.parent_zone_goal_title),
+            style = MaterialTheme.typography.titleMedium,
+            color = KidTheme.colors.parentZone,
+        )
+        Text(
+            text = stringResource(R.string.parent_zone_goal_hint),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(Modifier.height(12.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Button(
+                onClick = { onSetGoal(dailyGoal - 1) },
+                enabled = dailyGoal > com.freedu.kidslearn.domain.model.AppSettings.MIN_DAILY_GOAL,
+                modifier = Modifier.heightIn(min = 48.dp),
+            ) {
+                Text(text = "−", style = MaterialTheme.typography.headlineSmall)
+            }
+            Text(
+                text = dailyGoal.toString(),
+                style = MaterialTheme.typography.displaySmall,
+                color = KidTheme.colors.parentZone,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1f),
+            )
+            Button(
+                onClick = { onSetGoal(dailyGoal + 1) },
+                enabled = dailyGoal < com.freedu.kidslearn.domain.model.AppSettings.MAX_DAILY_GOAL,
+                modifier = Modifier.heightIn(min = 48.dp),
+            ) {
+                Text(text = "+", style = MaterialTheme.typography.headlineSmall)
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = stringResource(R.string.parent_zone_goal_met, metDays, totalDays),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 

@@ -73,6 +73,21 @@ data class WeeklyActivity(
 }
 
 /**
+ * Today's progress toward the parent-set daily goal.
+ *
+ * One number on purpose: lessons touched + games played is a single "practices"
+ * count a child can hold in mind, and it needs no new history table - both
+ * halves come from data the app already keeps.
+ */
+data class DailyGoalProgress(
+    val goal: Int,
+    val doneToday: Int,
+) {
+    val met: Boolean get() = doneToday >= goal
+    val remaining: Int get() = (goal - doneToday).coerceAtLeast(0)
+}
+
+/**
  * Lifetime aggregates shown on the progress dashboard and in the parent zone.
  *
  * Held as a single row (see `UserStatsEntity`) rather than recomputed with

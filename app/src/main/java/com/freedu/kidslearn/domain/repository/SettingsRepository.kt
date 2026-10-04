@@ -21,4 +21,10 @@ interface SettingsRepository {
     suspend fun setLastModule(module: ModuleType?)
 
     suspend fun setParentGateEnabled(enabled: Boolean)
+
+    /** Coerced to [AppSettings.MIN_DAILY_GOAL]..[AppSettings.MAX_DAILY_GOAL]. */
+    suspend fun setDailyGoal(goal: Int)
+
+    /** Records that today's goal celebration already fired. */
+    suspend fun markGoalCelebrated(today: java.time.LocalDate)
 }

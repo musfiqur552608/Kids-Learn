@@ -36,9 +36,20 @@ data class AppSettings(
     val lastModule: ModuleType? = null,
     /** When true, the parent zone is behind a maths gate. */
     val parentGateEnabled: Boolean = true,
+    /**
+     * Practices (lessons touched + games played) the child aims for each day.
+     * Always within [MIN_DAILY_GOAL]..[MAX_DAILY_GOAL]; setters coerce.
+     */
+    val dailyGoal: Int = DEFAULT_DAILY_GOAL,
+    /** Last date the goal celebration fired, so it fires once per day. */
+    val goalCelebratedDate: LocalDate? = null,
 ) {
     companion object {
         val DEFAULT = AppSettings()
+
+        const val DEFAULT_DAILY_GOAL = 3
+        const val MIN_DAILY_GOAL = 1
+        const val MAX_DAILY_GOAL = 8
     }
 }
 
