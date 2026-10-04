@@ -6,6 +6,7 @@ import com.freedu.kidslearn.data.content.ArabicCatalog
 import com.freedu.kidslearn.data.content.BanglaCatalog
 import com.freedu.kidslearn.data.content.EnglishCatalog
 import com.freedu.kidslearn.data.content.MathsCatalog
+import com.freedu.kidslearn.domain.model.lessonSpeechText
 import com.google.common.truth.Truth.assertThat
 import org.json.JSONObject
 import org.junit.Test
@@ -48,16 +49,24 @@ class BundledNarrationTest {
 
     /** Every (text, locale) the app speaks from a static catalog line. */
     private fun expectedLines(): List<Pair<String, String>> = buildList {
+        // Lesson phrasing comes from the shared helper, never rebuilt here: a
+        // rewording must fail this test until the clips are regenerated.
         EnglishCatalog.letters.forEach { item ->
-            add("${item.letter}. ${item.letter} for ${item.exampleWord}" to "en-US")
+            add(
+                lessonSpeechText(item.moduleType, item.letter, item.secondary, item.exampleWord) to "en-US",
+            )
             add(item.exampleWord to "en-US")
         }
         BanglaCatalog.letters.forEach { item ->
-            add("${item.letter}, ${item.exampleWord}" to "bn-BD")
+            add(
+                lessonSpeechText(item.moduleType, item.letter, item.secondary, item.exampleWord) to "bn-BD",
+            )
             add(item.exampleWord to "bn-BD")
         }
         ArabicCatalog.letters.forEach { item ->
-            add("${item.letter}, ${item.exampleWord}" to "ar-SA")
+            add(
+                lessonSpeechText(item.moduleType, item.letter, item.secondary, item.exampleWord) to "ar-SA",
+            )
             add(item.exampleWord to "ar-SA")
         }
         MathsCatalog.counting.forEach { add(it.word to "en-US") }

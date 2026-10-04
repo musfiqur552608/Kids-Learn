@@ -184,7 +184,7 @@ abstract class AlphabetViewModel(
     /** Reads the letter and its example word aloud. */
     fun pronounce(item: LetterItem) {
         feedbackPlayer.onTap()
-        feedbackPlayer.pronounceLesson(moduleType, item.letter, item.exampleWord)
+        feedbackPlayer.pronounceLesson(moduleType, item.letter, item.secondary, item.exampleWord)
     }
 
     /**

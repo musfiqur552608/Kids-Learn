@@ -42,15 +42,15 @@ class FeedbackPlayerTest {
     }
 
     @Test
-    fun `english lessons keep the for phrasing`() {
-        player.pronounceLesson(ModuleType.ENGLISH, "A", "Apple")
+    fun `english lessons name each case once`() {
+        player.pronounceLesson(ModuleType.ENGLISH, "A", "a", "Apple")
 
-        assertThat(spoken.single()).isEqualTo("A. A for Apple" to "en-US")
+        assertThat(spoken.single()).isEqualTo("Capital A, small a, A for Apple" to "en-US")
     }
 
     @Test
     fun `bangla lessons juxtapose letter and word with a bangla voice`() {
-        player.pronounceLesson(ModuleType.BANGLA, "খ", "খরগোশ")
+        player.pronounceLesson(ModuleType.BANGLA, "খ", "", "খরগোশ")
 
         val (text, locale) = spoken.single()
         assertThat(locale).isEqualTo("bn-BD")
@@ -60,7 +60,7 @@ class FeedbackPlayerTest {
 
     @Test
     fun `arabic lessons juxtapose letter and word with an arabic voice`() {
-        player.pronounceLesson(ModuleType.ARABIC, "ب", "بَطَّة")
+        player.pronounceLesson(ModuleType.ARABIC, "ب", "", "بَطَّة")
 
         val (text, locale) = spoken.single()
         assertThat(locale).isEqualTo("ar-SA")
@@ -70,7 +70,7 @@ class FeedbackPlayerTest {
 
     @Test
     fun `maths lessons juxtapose with an english voice`() {
-        player.pronounceLesson(ModuleType.MATHS, "5", "Five")
+        player.pronounceLesson(ModuleType.MATHS, "5", "", "Five")
 
         assertThat(spoken.single()).isEqualTo("5, Five" to "en-US")
     }

@@ -108,9 +108,11 @@ fun LetterTracingCanvas(
     val successColor = KidTheme.colors.success
     val tracingColor = KidTheme.colors.starGold
     val guideBackground = KidTheme.colors.successContainer
-    val userPath = remember { mutableStateListOf<Offset>() }
-    var isDrawing by remember { mutableStateOf(false) }
-    var quality by remember { mutableStateOf(TraceQuality.IDLE) }
+    // Keyed by letter: the detail screen reuses this composition when the child
+    // picks another letter, and yesterday's strokes must never score on it.
+    val userPath = remember(label, guidePoints) { mutableStateListOf<Offset>() }
+    var isDrawing by remember(label) { mutableStateOf(false) }
+    var quality by remember(label) { mutableStateOf(TraceQuality.IDLE) }
     // Pixel size of this canvas. Touches arrive in pixels but the guides live
     // in 0..1, so every recorded point is normalised here, at record time -
     // recording pixels and converting later is what made tracing unwinnable.
@@ -133,9 +135,15 @@ fun LetterTracingCanvas(
                     // every move must be consumed so the surrounding LazyColumn
                     // does not steal a trace as a scroll.
                     awaitEachGesture {
+                        // Strokes accumulate within an attempt: letters like A, E
+                        // or ঘ need two or more lifts of the finger, and clearing
+                        // on every touch-down made those letters unwinnable. Only
+                        // a fresh touch after a success starts clean.
+                        if (quality == TraceQuality.SUCCESS) {
+                            userPath.clear()
+                        }
                         isDrawing = true
                         quality = TraceQuality.IN_PROGRESS
-                        userPath.clear()
                         try {
                             // Every event is recorded, starting with the down
                             // itself: a tap that never moves still ends here

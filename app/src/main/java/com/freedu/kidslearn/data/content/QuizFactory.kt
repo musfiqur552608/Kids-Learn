@@ -6,6 +6,7 @@ import com.freedu.kidslearn.domain.model.LetterItem
 import com.freedu.kidslearn.domain.model.LessonItem
 import com.freedu.kidslearn.domain.model.ModuleType
 import com.freedu.kidslearn.domain.model.QuizKind
+import com.freedu.kidslearn.domain.model.lessonSpeechText
 import com.freedu.kidslearn.domain.model.QuizQuestion
 import com.freedu.kidslearn.domain.model.ShapeItem
 import kotlin.random.Random
@@ -124,14 +125,10 @@ class QuizFactory(
         // Options show the native word + picture, never the latin transliteration:
         // a Bangla/Arabic child cannot read "kho"/"gh", and showing latin next to
         // the emoji is exactly the "image not matched" parents reported.
-        // Speech reuses the exact lesson phrasing (see
-        // FeedbackPlayer.pronounceLesson) so every letter has a single bundled
-        // narration clip: the prompt already displays the letter, so speaking it
-        // reveals nothing extra.
-        val spoken = when (moduleType) {
-            ModuleType.ENGLISH -> "${item.letter}. ${item.letter} for ${item.exampleWord}"
-            else -> "${item.letter}, ${item.exampleWord}"
-        }
+        // Speech reuses the exact lesson phrasing ([lessonSpeechText]) so every
+        // letter has a single bundled narration clip: the prompt already displays
+        // the letter, so speaking it reveals nothing extra.
+        val spoken = lessonSpeechText(moduleType, item.letter, item.secondary, item.exampleWord)
         return QuizQuestion(
             id = "q_let2pic_${item.id}",
             moduleType = moduleType,

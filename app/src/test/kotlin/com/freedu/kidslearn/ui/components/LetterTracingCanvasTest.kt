@@ -138,6 +138,23 @@ class LetterTracingCanvasTest {
     }
 
     @Test
+    fun `two strokes accumulate to a pass`() {
+        // Multi-stroke letters (A, E, ঘ) need two or more lifts of the finger.
+        // Strokes share one attempt, so covering half the guide twice is a pass
+        // while either half alone is not.
+        val guide = guidePoints(
+            0.5f to 0.1f, 0.5f to 0.3f, 0.5f to 0.5f, 0.5f to 0.7f, 0.5f to 0.9f,
+        )
+        val firstStroke = guide.take(2)
+        val secondStroke = guide.drop(2)
+
+        assertThat(evaluateTrace(firstStroke + List(2) { firstStroke.last() }, guide).quality)
+            .isEqualTo(TraceQuality.IN_PROGRESS)
+        assertThat(evaluateTrace(firstStroke + secondStroke, guide).quality)
+            .isEqualTo(TraceQuality.SUCCESS)
+    }
+
+    @Test
     fun `every guide produces a usable polyline`() {
         TraceGuide.entries.forEach { guide ->
             val points = guide.normalisedPoints()

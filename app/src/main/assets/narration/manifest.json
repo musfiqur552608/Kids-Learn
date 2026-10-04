@@ -2,7 +2,7 @@
  "version": 1,
  "entries": [
   {
-   "text": "A. A for Apple",
+   "text": "Capital A, small a, A for Apple",
    "locale": "en-US",
    "file": "en_l01.mp3"
   },
@@ -12,7 +12,7 @@
    "file": "en_w01.mp3"
   },
   {
-   "text": "B. B for Ball",
+   "text": "Capital B, small b, B for Ball",
    "locale": "en-US",
    "file": "en_l02.mp3"
   },
@@ -22,7 +22,7 @@
    "file": "en_w02.mp3"
   },
   {
-   "text": "C. C for Cat",
+   "text": "Capital C, small c, C for Cat",
    "locale": "en-US",
    "file": "en_l03.mp3"
   },
@@ -32,7 +32,7 @@
    "file": "en_w03.mp3"
   },
   {
-   "text": "D. D for Dog",
+   "text": "Capital D, small d, D for Dog",
    "locale": "en-US",
    "file": "en_l04.mp3"
   },
@@ -42,7 +42,7 @@
    "file": "en_w04.mp3"
   },
   {
-   "text": "E. E for Egg",
+   "text": "Capital E, small e, E for Egg",
    "locale": "en-US",
    "file": "en_l05.mp3"
   },
@@ -52,7 +52,7 @@
    "file": "en_w05.mp3"
   },
   {
-   "text": "F. F for Fish",
+   "text": "Capital F, small f, F for Fish",
    "locale": "en-US",
    "file": "en_l06.mp3"
   },
@@ -62,7 +62,7 @@
    "file": "en_w06.mp3"
   },
   {
-   "text": "G. G for Goat",
+   "text": "Capital G, small g, G for Goat",
    "locale": "en-US",
    "file": "en_l07.mp3"
   },
@@ -72,7 +72,7 @@
    "file": "en_w07.mp3"
   },
   {
-   "text": "H. H for Hat",
+   "text": "Capital H, small h, H for Hat",
    "locale": "en-US",
    "file": "en_l08.mp3"
   },
@@ -82,7 +82,7 @@
    "file": "en_w08.mp3"
   },
   {
-   "text": "I. I for Ice cream",
+   "text": "Capital I, small i, I for Ice cream",
    "locale": "en-US",
    "file": "en_l09.mp3"
   },
@@ -92,7 +92,7 @@
    "file": "en_w09.mp3"
   },
   {
-   "text": "J. J for Juice",
+   "text": "Capital J, small j, J for Juice",
    "locale": "en-US",
    "file": "en_l10.mp3"
   },
@@ -102,7 +102,7 @@
    "file": "en_w10.mp3"
   },
   {
-   "text": "K. K for Kite",
+   "text": "Capital K, small k, K for Kite",
    "locale": "en-US",
    "file": "en_l11.mp3"
   },
@@ -112,7 +112,7 @@
    "file": "en_w11.mp3"
   },
   {
-   "text": "L. L for Lion",
+   "text": "Capital L, small l, L for Lion",
    "locale": "en-US",
    "file": "en_l12.mp3"
   },
@@ -122,7 +122,7 @@
    "file": "en_w12.mp3"
   },
   {
-   "text": "M. M for Moon",
+   "text": "Capital M, small m, M for Moon",
    "locale": "en-US",
    "file": "en_l13.mp3"
   },
@@ -132,7 +132,7 @@
    "file": "en_w13.mp3"
   },
   {
-   "text": "N. N for Nest",
+   "text": "Capital N, small n, N for Nest",
    "locale": "en-US",
    "file": "en_l14.mp3"
   },
@@ -142,7 +142,7 @@
    "file": "en_w14.mp3"
   },
   {
-   "text": "O. O for Orange",
+   "text": "Capital O, small o, O for Orange",
    "locale": "en-US",
    "file": "en_l15.mp3"
   },
@@ -152,7 +152,7 @@
    "file": "en_w15.mp3"
   },
   {
-   "text": "P. P for Parrot",
+   "text": "Capital P, small p, P for Parrot",
    "locale": "en-US",
    "file": "en_l16.mp3"
   },
@@ -162,7 +162,7 @@
    "file": "en_w16.mp3"
   },
   {
-   "text": "Q. Q for Queen",
+   "text": "Capital Q, small q, Q for Queen",
    "locale": "en-US",
    "file": "en_l17.mp3"
   },
@@ -172,7 +172,7 @@
    "file": "en_w17.mp3"
   },
   {
-   "text": "R. R for Rabbit",
+   "text": "Capital R, small r, R for Rabbit",
    "locale": "en-US",
    "file": "en_l18.mp3"
   },
@@ -182,7 +182,7 @@
    "file": "en_w18.mp3"
   },
   {
-   "text": "S. S for Sun",
+   "text": "Capital S, small s, S for Sun",
    "locale": "en-US",
    "file": "en_l19.mp3"
   },
@@ -192,7 +192,7 @@
    "file": "en_w19.mp3"
   },
   {
-   "text": "T. T for Tree",
+   "text": "Capital T, small t, T for Tree",
    "locale": "en-US",
    "file": "en_l20.mp3"
   },
@@ -202,7 +202,7 @@
    "file": "en_w20.mp3"
   },
   {
-   "text": "U. U for Umbrella",
+   "text": "Capital U, small u, U for Umbrella",
    "locale": "en-US",
    "file": "en_l21.mp3"
   },
@@ -212,7 +212,7 @@
    "file": "en_w21.mp3"
   },
   {
-   "text": "V. V for Van",
+   "text": "Capital V, small v, V for Van",
    "locale": "en-US",
    "file": "en_l22.mp3"
   },
@@ -222,7 +222,7 @@
    "file": "en_w22.mp3"
   },
   {
-   "text": "W. W for Watch",
+   "text": "Capital W, small w, W for Watch",
    "locale": "en-US",
    "file": "en_l23.mp3"
   },
@@ -232,7 +232,7 @@
    "file": "en_w23.mp3"
   },
   {
-   "text": "X. X for Xmas tree",
+   "text": "Capital X, small x, X for Xmas tree",
    "locale": "en-US",
    "file": "en_l24.mp3"
   },
@@ -242,7 +242,7 @@
    "file": "en_w24.mp3"
   },
   {
-   "text": "Y. Y for Yo-yo",
+   "text": "Capital Y, small y, Y for Yo-yo",
    "locale": "en-US",
    "file": "en_l25.mp3"
   },
@@ -252,7 +252,7 @@
    "file": "en_w25.mp3"
   },
   {
-   "text": "Z. Z for Zebra",
+   "text": "Capital Z, small z, Z for Zebra",
    "locale": "en-US",
    "file": "en_l26.mp3"
   },

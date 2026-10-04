@@ -13,7 +13,7 @@ Why bundle narration instead of relying on the system text-to-speech engine?
 
 What is covered: every static Listen/quiz/praise line the app can speak in
 Bangla, Arabic, or Maths/English-lesson context (~250 short clips):
-  * lesson cards:  "A. A for Apple" / "খ, খরগোশ" / "ب, بَطَّة"
+  * lesson cards:  "Capital A, small a, A for Apple" / "খ, খরগোশ" / "ب, بَطَّة"
   * quiz prompts:  word-only "খরগোশ" (picture -> letter never reveals the letter)
   * numbers:       "One" .. "Twenty"; shapes: "Red" .. "Heart"; "How many?"
   * encouragements: the 5 English + 5 Bangla mascot lines.
@@ -120,7 +120,9 @@ def collect():
     en = entries(read("data/content/EnglishCatalog.kt"), ["letter"])
     assert len(en) == 26, f"English letters: {len(en)}"
     for i, (upper, lower, sound, word, meaning, visual) in enumerate(en, 1):
-        phrases.append((nfc(f"{upper}. {upper} for {word}"), "en", "en-US", f"en_l{i:02d}.mp3"))
+        # Mirrors lessonSpeechText() in domain/model/LessonSpeech.kt: each case
+        # named once ("Capital A, small a, ..."), never the bare letter twice.
+        phrases.append((nfc(f"Capital {upper}, small {lower}, {upper} for {word}"), "en", "en-US", f"en_l{i:02d}.mp3"))
         phrases.append((nfc(word), "en", "en-US", f"en_w{i:02d}.mp3"))
 
     bn_src = read("data/content/BanglaCatalog.kt")

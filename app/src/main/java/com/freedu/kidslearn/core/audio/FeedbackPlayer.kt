@@ -2,6 +2,7 @@ package com.freedu.kidslearn.core.audio
 
 import com.freedu.kidslearn.domain.model.ModuleType
 import com.freedu.kidslearn.domain.model.UiLanguage
+import com.freedu.kidslearn.domain.model.lessonSpeechText
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -78,13 +79,16 @@ class FeedbackPlayer @Inject constructor(
      * engine pronounce the English word "for" as Bangla/Arabic - which is exactly
      * the "wrong sound" a parent hears. Bangla and Arabic primers simply juxtapose
      * the letter and the word ("খ, খেলা" / "ب, بطة"), so that is what is spoken.
+     * English names each case once ("Capital A, small a, ...") so the letter is
+     * never read out twice in a row.
+     *
+     * The exact line lives in [lessonSpeechText], shared with the quiz prompt.
      */
-    fun pronounceLesson(moduleType: ModuleType, letter: String, word: String) {
-        val text = when (moduleType) {
-            ModuleType.ENGLISH -> "$letter. $letter for $word"
-            ModuleType.BANGLA, ModuleType.ARABIC, ModuleType.MATHS -> "$letter, $word"
-        }
-        speech.speak(text, Locales.forModule(moduleType))
+    fun pronounceLesson(moduleType: ModuleType, letter: String, secondary: String, word: String) {
+        speech.speak(
+            lessonSpeechText(moduleType, letter, secondary, word),
+            Locales.forModule(moduleType),
+        )
     }
 
     /** Reads a quiz prompt, e.g. "How many?" or "3 plus 2". */
