@@ -343,7 +343,7 @@ private fun LetterDetail(
     modifier: Modifier = Modifier,
 ) {
     val accent = KidTheme.colors.accentFor(moduleType)
-    val guide = TraceGuideSupport.forLetter(item.letter)
+    val traceGuide = TraceGuideSupport.forLetter(item.letter, moduleType)
 
     androidx.compose.foundation.lazy.LazyColumn(
         modifier = modifier.fillMaxWidth(),
@@ -405,7 +405,7 @@ private fun LetterDetail(
             }
         }
 
-        if (guide != null) {
+        if (traceGuide != null) {
             item {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
@@ -414,14 +414,25 @@ private fun LetterDetail(
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                     Spacer(Modifier.height(8.dp))
-                    com.freedu.kidslearn.ui.components.LetterTracingCanvas(
-                        guide = guide,
+                    when (traceGuide) {
+                        is LetterTraceGuide.Hand -> com.freedu.kidslearn.ui.components.LetterTracingCanvas(
+                            guide = traceGuide.guide,
                             onTraceFinished = onTraceComplete,
-                        accentColor = accent,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(220.dp),
-                    )
+                            accentColor = accent,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(220.dp),
+                        )
+                        is LetterTraceGuide.Glyph -> com.freedu.kidslearn.ui.components.GlyphTracingCanvas(
+                            text = traceGuide.text,
+                            fontRes = traceGuide.fontRes,
+                            onTraceFinished = onTraceComplete,
+                            accentColor = accent,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(220.dp),
+                        )
+                    }
                 }
             }
         }
@@ -438,9 +449,39 @@ private fun LetterDetail(
     }
 }
 
-/** Maps a display letter to a traceable guide, or null when there is none. */
-private object TraceGuideSupport {
-    fun forLetter(letter: String): com.freedu.kidslearn.ui.components.TraceGuide? =
+/**
+ * Which tracing panel a letter gets.
+ *
+ * Hand skeletons for A-Z; the real glyph outline - in the module's own font -
+ * for everything else. Internal (not private) so the routing is unit-tested.
+ */
+sealed interface LetterTraceGuide {
+    data class Hand(val guide: com.freedu.kidslearn.ui.components.TraceGuide) : LetterTraceGuide
+    data class Glyph(val text: String, val fontRes: Int?) : LetterTraceGuide
+}
+
+/** Maps a display letter to its tracing panel. */
+internal object TraceGuideSupport {
+    fun forLetter(
+        letter: String,
+        moduleType: ModuleType,
+    ): LetterTraceGuide? {
+        val text = letter.trim()
+        if (text.isEmpty()) return null
         com.freedu.kidslearn.ui.components.TraceGuide.entries
-            .firstOrNull { it.label.equals(letter.trim(), ignoreCase = true) }
+            .firstOrNull { it.label.equals(text, ignoreCase = true) }
+            ?.let { return LetterTraceGuide.Hand(it) }
+        // No skeleton (Bangla, Arabic, Q): trace the true outline instead.
+        // Maths has no letters, so it opts out rather than tracing numerals.
+        if (moduleType == ModuleType.MATHS || text.length > MAX_GLYPH_CHARS) return null
+        val fontRes = when (moduleType) {
+            ModuleType.BANGLA -> com.freedu.kidslearn.R.font.noto_sans_bengali
+            ModuleType.ARABIC -> com.freedu.kidslearn.R.font.noto_naskh_arabic
+            else -> null // Platform typeface draws Latin fine.
+        }
+        return LetterTraceGuide.Glyph(text, fontRes)
+    }
+
+    /** Single glyphs only (two chars admit a surrogate pair, nothing longer). */
+    private const val MAX_GLYPH_CHARS = 2
 }

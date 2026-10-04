@@ -12,14 +12,16 @@ import kotlin.math.sin
  * All points are in a 0..1 box with the origin at the **top left**, matching
  * Compose's coordinate system. `y = 0` is the top of the canvas.
  *
- * ## Why polylines and not real font outlines
- * Extracting a glyph outline from the TTF would need font parsing at runtime (or
- * a build step), and a traced outline asks the child to follow the *skeleton* of a
- * letter rather than its exact contour. The skeleton is also what a child is
- * mentally drawing when they trace a letter, so the simplified version is more
- * pedagogically accurate, not less.
+ * ## Why polylines here, and real outlines elsewhere
+ * A traced outline asks the child to follow the *skeleton* of a letter rather
+ * than its exact contour, and the skeleton is what a child is mentally drawing -
+ * so for A-Z the simplified version is more pedagogically accurate, not less.
+ * But authoring 74 more skeletons for Bangla and Arabic by hand would be
+ * error-prone, so those scripts sample the true glyph outline from the bundled
+ * font instead (see [GlyphTrace]): the contour is what the child sees on the
+ * card, which matters more than skeleton purity.
  *
- * Only the letters worth tracing are listed. A fallback circle is used for
+ * Only the letters worth hand-tracing are listed. A fallback circle is used for
  * anything else so the feature never fails - a child tapping "trace" on an
  * unsupported letter still gets the interaction rather than a crash or a blank
  * panel.

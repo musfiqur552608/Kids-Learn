@@ -75,6 +75,30 @@ fun LetterTracingCanvas(
     accentColor: Color,
 ) {
     val guidePoints = remember(guide) { guide.normalisedPoints() }
+    LetterTracingCanvas(
+        guidePoints = guidePoints,
+        label = guide.label,
+        onTraceFinished = onTraceFinished,
+        modifier = modifier,
+        enabled = enabled,
+        accentColor = accentColor,
+    )
+}
+
+/**
+ * The same tracing panel driven by precomputed points - the entry point for
+ * glyph-outline guides ([GlyphTrace]), which resolve their font at the call
+ * site rather than from an enum.
+ */
+@Composable
+fun LetterTracingCanvas(
+    guidePoints: List<Offset>,
+    label: String,
+    onTraceFinished: (TraceResult) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    accentColor: Color,
+) {
     // Read the palette here, in composition scope. `Canvas`'s draw block is a
     // DrawScope lambda, not a composable, so a `KidTheme.colors` read inside it
     // would not compile - and hoisting also means one lookup per recomposition
@@ -89,12 +113,12 @@ fun LetterTracingCanvas(
     Box(
         modifier = modifier
             .background(guideBackground, RoundedCornerShape(28.dp))
-            .semantics { contentDescription = "Tracing area for the letter ${guide.label}" },
+            .semantics { contentDescription = "Tracing area for the letter $label" },
     ) {
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(enabled, guide) {
+                .pointerInput(enabled, guidePoints) {
                     if (!enabled) return@pointerInput
                     detectDragGestures(
                         onDragStart = { offset ->
